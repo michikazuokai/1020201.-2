@@ -1,0 +1,752 @@
+%----------------------------------------------------------------------------------------
+%  metropolis template (refactored)
+%----------------------------------------------------------------------------------------
+\documentclass[aspectratio=169]{beamer}
+
+% \documentclass の直後で hyperref のオプションを渡す（metropolisでも安全）
+\PassOptionsToPackage{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue}{hyperref}
+
+\usetheme{metropolis}
+\metroset{block=fill, sectionpage=progressbar, progressbar=foot}
+
+% 背景色（tech のとき白など）: Pythonで差し込み
+
+
+%--------------------------
+% 日本語
+%--------------------------
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\usepackage{luatexja-ruby}
+\setsansjfont{Hiragino Sans}[BoldFont={Hiragino Sans W6}]
+
+%--------------------------
+% 基本パッケージ（重複なし）
+%--------------------------
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage[abs]{overpic}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{mathtools}
+\usepackage{longtable}
+\usepackage{pdfpages}
+\usepackage{etoolbox} % AtBeginEnvironment 等
+
+% minted（※ -shell-escape 必須）
+\usepackage{minted}
+\setminted{
+  frame=single,
+  framesep=2mm,
+  fontsize=\footnotesize,
+  breaklines=true
+}
+
+% （必要なときだけ）tcolorbox
+\usepackage[most]{tcolorbox}
+
+% hyperref は最後
+\usepackage{hyperref}
+
+%--------------------------
+% パス
+%--------------------------
+\newcommand{\assetpath}{/Volumes/NBPlan/TTC/授業資料/2025年度/}
+\graphicspath{{images/}{\assetpath/1020201.アルゴリズム２/03/images/}{../project_assets/images/}{../project_assets/emoji/emoji_pngs/}}
+
+%--------------------------
+% フッター
+%--------------------------
+\newcommand{\myfootertext}{1020201.アルゴリズム２/03}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox to \paperwidth{%
+    \hspace*{0.2cm}
+    \scriptsize\color{gray!50} \myfootertext
+    \hfill
+    \scriptsize\color{gray} \insertframenumber{} / \inserttotalframenumber
+    \hspace*{0.4cm}
+  }%
+  \vspace{1pt}
+}
+
+%--------------------------
+% TeacherFrame（外部）
+%--------------------------
+\usepackage{../teacherframe}
+
+%--------------------------
+% フレームタイトル：番号. タイトル
+% ※ ここで出すだけ。insertframetitle を再定義しない（安全）
+%--------------------------
+\setbeamertemplate{frametitle}{%
+  \vspace{0.6ex}%
+  \begin{beamercolorbox}[wd=\paperwidth,sep=0.5ex,leftskip=0.9em,rightskip=0.5em]{frametitle}%
+    \usebeamerfont{frametitle}%
+    \insertframenumber.\,\insertframetitle%
+  \end{beamercolorbox}%
+}
+
+%--------------------------
+% 表用：列型
+%--------------------------
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\raggedright\arraybackslash}m{#1}}
+
+%--------------------------
+% ブロック（必要なら）
+%--------------------------
+\definecolor{myblue}{HTML}{7488FF}
+\definecolor{mylightblue}{HTML}{E3EEFF}
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{bg=myblue, fg=white}
+\setbeamercolor{block body}{bg=mylightblue, fg=black}
+
+%========================================================
+% exampleblock（examplebox相当）だけの調整
+%  - タイトル文字：白
+%  - 背景色：現行のまま（bgは指定しない）
+%  - 本文 itemize：文字も●も黒（exampleblock内だけ）
+%========================================================
+
+% タイトル文字だけ白（背景は触らない）
+\setbeamercolor{block title example}{fg=white}
+
+% 本文の通常文字色は「現行のまま」を基本にする（必要なら黒にしてもよい）
+% ここは bg を触らないのが目的なので fg だけ調整可能
+\setbeamercolor{block body example}{fg=black}
+
+% exampleblock の中だけ itemize の色（●と文字）を黒に
+\AtBeginEnvironment{exampleblock}{%
+  \setbeamercolor{itemize item}{fg=black}
+  \setbeamercolor{itemize subitem}{fg=black}
+  \setbeamercolor{itemize subsubitem}{fg=black}
+  \setbeamercolor{item}{fg=black} % 念のため
+}
+
+% exampleblock を抜けたらテーマ標準に戻す（色が残る事故防止）
+\AtEndEnvironment{exampleblock}{%
+  \setbeamercolor{itemize item}{fg=normal text.fg}
+  \setbeamercolor{itemize subitem}{fg=normal text.fg}
+  \setbeamercolor{itemize subsubitem}{fg=normal text.fg}
+  \setbeamercolor{item}{fg=normal text.fg}
+}
+
+%--------------------------
+% 奇数ページのスライドのを表示する
+%（教示用だけでそれ以外はこの処理は動かない）
+%--------------------------
+% --- 教師用だけ、スライドを奇数開始に強制するトグル ---
+\newif\ifoddslideenforce
+\oddslideenforcefalse   % デフォルトOFF（pr/hoはOFF）
+
+% --- 再帰防止ガード ---
+\newif\ifoddslideguard
+\oddslideguardfalse
+
+% --- 偶数ページなら空白スライドを1枚入れて奇数に戻す ---
+\newcommand{\ensureoddslide}{%
+  \ifoddslideguard\relax\else
+    \oddslideguardtrue
+    \ifodd\value{page}\relax
+      % 何もしない（次が奇数）
+    \else
+      \begin{frame}[plain,noframenumbering]
+        \note{}% notes出力時に2枚消費させる保険
+      \end{frame}
+    \fi
+    \oddslideguardfalse
+  \fi
+}
+
+% --- frameが始まる直前に自動挿入（教師用だけ）---
+\BeforeBeginEnvironment{frame}{%
+  \ifoddslideenforce
+    \ensureoddslide
+  \fi
+}
+
+%--------------------------
+% note / noteT の「常時安全化」
+%  - tech 以外：\noteT は無視（エラーにならない）
+%  - tech：notesmode_tech で上書き定義
+%--------------------------
+\providecommand{\notetitletext}{}      % 既にあっても衝突しない
+\providecommand{\noteT}[2]{}           % デフォルトは何もしない
+
+% frame開始ごとにタイトル変数をクリア（前の noteT が残らないように）
+\AtBeginEnvironment{frame}{\gdef\notetitletext{}}
+
+%--------------------------
+% 切替（Pythonから差し込み）
+%--------------------------
+\mypausemodetrue
+\teachermodefalse
+
+%-------------
+
+\providecommand{\noteT}[2]{} % noteT を無視
+
+
+%----------------------------------------------------------------------------------------
+% タイトル
+%----------------------------------------------------------------------------------------
+\title{ 03 記述統計（集計・可視化・分布の把握） }
+\date{}
+\newcommand{\codedir}{\assetpath/1020201.アルゴリズム２/03}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+  \bigskip
+  \begin{center}
+    \ifteachermode 教師用 \fi
+  \end{center}
+\end{frame}
+
+% セクションページ（必要なら）
+\setbeamertemplate{section page}{
+  \begin{centering}
+    \vfill
+    \rule{\linewidth}{2pt}\par
+    \vspace{1ex}
+    {\usebeamerfont{section title}\Huge\bfseries \insertsection}\par
+    \vspace{1ex}
+    \rule{\linewidth}{2pt}\par
+    \vfill
+  \end{centering}
+}
+\setbeamerfont{section title}{size=\LARGE,series=\bfseries}
+
+\AtBeginSection[]{
+  \begin{frame}[plain,noframenumbering]
+    \sectionpage
+  \end{frame}
+}
+
+% 本編開始でフレーム番号を0から（必要なら）
+\setcounter{framenumber}{0}
+
+\input{emoji_macros}
+
+% @@@--(metropolis)--@@@
+% ----------------------------------------------------------------------------------------
+%   Slide 01: 第2回のテーマ
+% ----------------------------------------------------------------------------------------
+\begin{frame}{第2回：記述統計 ― データの全体像をつかむ}
+前回は、\textbf{1人で測ったポテトの重さ}を使って、
+「同じ商品でも重さが毎回違う」ことを確認しました。
+
+\vspace{0.6em}
+今回は、
+\begin{itemize}
+  \item データの数を増やし
+  \item 全体をまとめて見て
+  \item その特徴を整理する
+\end{itemize}
+ことで、\textbf{データの全体像を読む}ことを目指します。
+
+\vspace{0.6em}
+このように、手元にあるデータを整理・要約する考え方を
+\textbf{記述統計}と呼びます。
+
+\noteT{導入}{
+・第1回との連続性をまず強調する。\\
+・「今日は何をする回か」を先に明確にする。
+}
+\end{frame}
+% ----------------------------------------------------------------------------------------
+%   Slide 02: 前回の疑問
+% ----------------------------------------------------------------------------------------
+\begin{frame}{前回の測定で残った疑問}
+前回は、\textbf{「私」1人}がポテトの重さを測りました。
+
+\vspace{0.6em}
+その結果、
+\begin{itemize}
+  \item 平均はだいたい決まっていそう
+  \item でも、軽い日・重い日がある
+\end{itemize}
+ことが分かりました。
+
+\vspace{0.6em}
+ここで、1つ疑問が残ります。
+
+\vspace{0.4em}
+\textbf{このばらつきは、}
+\begin{itemize}
+  \item たまたまなのか？
+  \item 「私」だけの測定結果なのか？
+\end{itemize}
+
+\noteT{疑問提示}{
+・「1人データの限界」を学生自身に気づかせる。\\
+・次の行動（人数を増やす）への動機づけ。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 03: 調査チームを作る
+% ----------------------------------------------------------------------------------------
+\begin{frame}{調査チームを作って確かめることにした}
+そこで今回は、
+\textbf{クラス30人全員}に声をかけて、
+調査チームを作ることにしました。
+
+\vspace{0.6em}
+\textbf{調査のルール}
+\begin{itemize}
+  \item 同じ店のポテトを使う
+  \item 1週間、それぞれが測定する
+  \item 重さを記録し、気づいたことをメモする
+\end{itemize}
+
+\vspace{0.6em}
+こうして集まったのが、
+\textbf{30人分のポテト重量データ}です。
+
+\noteT{ストーリー}{
+・「調査チーム」という言葉で参加感を出す。\\
+・ルールを簡潔に示し、データの前提条件を共有する。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 04: 今日やること
+% ----------------------------------------------------------------------------------------
+\begin{frame}{今日やること：集まったデータをどう見るか}
+今日は、この30人分のデータを使って、
+次のことを順番に行います。
+
+\vspace{0.6em}
+\begin{enumerate}
+  \item 数でまとめてみる（平均・最小・最大）
+  \item グラフで形を見てみる
+  \item 「なぜこうなったか」を考える
+\end{enumerate}
+
+\vspace{0.6em}
+まずは、
+\textbf{全体を1つの数で見たらどうなるか}を
+確かめてみましょう。
+
+\vspace{0.4em}
+\centering
+→ 演習①へ
+
+\noteT{演習への接続}{
+・分析手法を先に言わず、行動の流れだけを示す。\\
+・このまま演習①に自然につなげる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide A: 演習① 全体の基本統計量（重さ_g）
+% ----------------------------------------------------------------------------------------
+\begin{frame}{演習①：ポテト重量の基本統計量を求める}
+クラス30人が1週間調査したポテト重量データ（\texttt{poteto30.xlsx}）を用いて、
+全体の数値的な特徴を確認します。
+
+\vspace{0.5em}
+\textbf{対象とする列}
+\begin{itemize}
+  \item \textbf{重さ\_g}（ポテトの重量）
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{作業内容}
+\begin{enumerate}
+  \item \texttt{AVERAGE} 関数で \textbf{平均値} を求める
+  \item \texttt{MEDIAN} 関数で \textbf{中央値} を求める
+  \item \texttt{MIN}, \texttt{MAX} 関数で \textbf{最小値・最大値} を求める
+\end{enumerate}
+
+\vspace{0.5em}
+\textbf{確認するポイント}
+\begin{itemize}
+  \item 平均値と中央値は近いか、離れているか
+  \item 最小値・最大値は、平均からどの程度離れているか
+\end{itemize}
+
+\noteT{演習①の狙い}{
+・まずは「全体を1つの数で表す」体験をさせる。\\
+・ここでは評価や解釈を行わず、数値を出すことに集中させる。\\
+・次のスライドで「平均だけで十分か？」という問いにつなげる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide B: 【問い】平均値だけで判断できるか？
+% ----------------------------------------------------------------------------------------
+\begin{frame}{【問い】平均値だけで、この店のポテトを評価できるか？}
+演習①で、ポテト重量の \textbf{平均値}・\textbf{中央値}・\textbf{最小値}・\textbf{最大値} を求めました。
+
+\vspace{0.8em}
+ここで、次の問いを考えてみましょう。
+
+\vspace{-0.5em}
+\begin{block}{問い}
+平均値が \textbf{約133g} だったとします。\\
+この数値だけを見て、
+\begin{itemize}
+  \item 「この店のポテトは、だいたい133gだ」
+  \item 「品質として問題ない」
+\end{itemize}
+と判断してよいでしょうか？
+\end{block}
+
+\vspace{-0.5em}
+\textbf{ヒント：}
+\begin{itemize}
+  \item 最小値や最大値は、平均からどのくらい離れていましたか？
+  \item 133g から大きく外れたデータは、いくつありましたか？
+\end{itemize}
+
+\noteT{問いの狙い}{
+・学生が自然に「平均だけでは不安だ」と感じる状態を作る。\\
+・まだ「分布」という言葉は使わず、違和感だけを持たせる。\\
+・次の演習（ヒストグラム）への動機づけとする。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide C: 演習② ヒストグラムで全体の形を見る
+% ----------------------------------------------------------------------------------------
+\begin{frame}{演習②：ヒストグラムで全体の形を確かめる}
+演習①で求めた数値（平均・最小・最大）をふまえ、
+ポテト重量データ全体の「集まり方」をグラフで確認します。
+
+\vspace{-0.5em}
+\textbf{対象とする列}
+\begin{itemize}
+  \item \textbf{重さ\_g}（ポテトの重量）
+\end{itemize}
+
+\vspace{-0.5em}
+\textbf{作業内容}
+\begin{enumerate}
+  \item 「重さ\_g」の列を選択する
+  \item 「挿入」タブから \textbf{ヒストグラム} を作成する
+\end{enumerate}
+
+\vspace{-0.5em}
+\textbf{観察するポイント}
+\begin{itemize}
+  \item データは、どのあたりに多く集まっているか
+  \item 平均値（約133g）は、山の中央にあるか
+  \item 端のほうに、極端に離れた値は見えるか
+\end{itemize}
+
+\noteT{演習②の狙い}{
+・数値ではなく「形」で全体を見る体験をさせる。\\
+・平均値を点としてではなく、分布の中に位置づけさせる。\\
+・次のスライドで「分布」という言葉を導入する準備とする。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide D: 分布とは何か
+% ----------------------------------------------------------------------------------------
+\begin{frame}{分布（Distribution）：データの集まり方を見る}
+演習②で作成したヒストグラムは、
+ポテト重量データの「分布」を表しています。
+
+\textbf{分布とは}
+\vspace{-0.6em}
+\begin{itemize}
+  \item どの値が
+  \item どのくらいの回数（頻度）で
+  \item どのように集まっているか
+\end{itemize}
+を表したものです。
+
+\textbf{重要なポイント}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 分布を見ると、「平均のまわりにどう広がっているか」が分かる
+  \item 同じ平均値でも、分布の形が違えば意味は大きく変わる
+\end{itemize}
+
+\textbf{ここまでで分かったこと}
+\vspace{-0.6em}
+\begin{itemize}
+  \item ポテトの重さは、毎回まったく同じではない
+  \item そのばらつきは、ヒストグラムの「形」として現れている
+\end{itemize}
+
+\noteT{分布の導入}{
+・新しい数式や専門用語は出さず、直前のヒストグラム体験と結びつける。\\
+・「分布＝形を見ること」という感覚をまず定着させる。\\
+・次に、分布を見るときの具体的な視点（中心・広がり）へつなげる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide E: 分布を見る視点① 中心
+% ----------------------------------------------------------------------------------------
+\begin{frame}{分布を見る視点①：中心（平均・中央値）}
+分布を見るとき、まず注目するのが
+データの「中心」です。
+
+\textbf{中心を表す代表的な数値}
+\vspace{-0.6em}
+\begin{itemize}
+  \item \textbf{平均値：} すべての値を均したときの中心
+  \item \textbf{中央値：} 小さい順に並べたときの真ん中
+\end{itemize}
+
+\textbf{ヒストグラムと対応づけて考える}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 平均値（約133g）は、分布のどの位置にあるか
+  \item 中央値は、山の中心付近にあるか
+\end{itemize}
+
+\textbf{重要な点}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 平均と中央値が近い場合、分布は比較的対称と考えられる
+  \item 大きくずれている場合、分布に偏りがある可能性が高い
+\end{itemize}
+
+\noteT{中心を見る狙い}{
+・演習①で求めた数値を、分布の中に「置き直す」意識を持たせる。\\
+・平均と中央値は計算方法ではなく、分布との関係で理解させる。\\
+・次に「なぜずれるのか？」という問いを自然に生む。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide F: 分布を見る視点② 広がり（ばらつき）
+% ----------------------------------------------------------------------------------------
+\begin{frame}{分布を見る視点②：広がり（ばらつき）}
+分布を見るときは、中心だけでなく
+データが「どのくらい散らばっているか」にも注目します。
+
+\textbf{広がりを感じ取るための手がかり}
+\vspace{-0.6em}
+\begin{itemize}
+  \item \textbf{最小値と最大値：}
+        データがどこからどこまで広がっているか
+  \item \textbf{中心からの距離：}
+        平均（約133g）から大きく離れた値があるか
+\end{itemize}
+
+\textbf{ヒストグラムで確認する}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 棒が横にどれくらい広がっているか
+  \item 中心付近に集中しているか、ばらけているか
+\end{itemize}
+
+\textbf{重要な点}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 広がりが小さいほど、重さは安定していると言える
+  \item 広がりが大きい場合、同じ平均でも「ばらつきの大きい店」となる
+\end{itemize}
+
+\noteT{広がりを見る狙い}{
+・数式や専門用語を使わず、まずは視覚的・感覚的にばらつきを捉えさせる。\\
+・「安定している／していない」という評価が、分布の広がりから生まれることを示す。\\
+・次に、広がりの中で特に目立つ値＝外れ値へ話題をつなげる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide H: 演習③ 外れ値になっている行を確認する
+% ----------------------------------------------------------------------------------------
+\begin{frame}{演習③：外れ値になっているデータ行を確認する}
+ヒストグラムで確認した分布の中から、
+中心から大きく離れている値（外れ値になりそうなデータ）を
+実際の行として確認します。
+
+\textbf{作業内容}
+\vspace{-0.6em}
+\begin{enumerate}
+  \item \textbf{重さ\_g} の列を並べ替える（昇順・降順）
+  \item 特に小さい値・大きい値の行をいくつか選ぶ
+  \item その行の \textbf{曜日}・\textbf{学生ID}・\textbf{メモ} を確認する
+\end{enumerate}
+
+\textbf{考えてみるポイント}
+\vspace{-0.6em}
+\begin{itemize}
+  \item なぜこの値は、他と比べて大きく（または小さく）なったのか
+  \item 測定ミスの可能性はあるか
+  \item 特別な状況（忙しさ、盛り付けのクセなど）が考えられるか
+\end{itemize}
+
+\noteT{演習③の狙い}{
+・「外れ値」という言葉を、実際のデータ行と結びつける。\\
+・数値だけでなく、曜日やメモといった文脈情報を見る意識を持たせる。\\
+・次に、データを分けて見る（曜日別・人別）必要性につなげる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide I: 演習④ 曜日別に分けて見る
+% ----------------------------------------------------------------------------------------
+\begin{frame}{演習④：曜日別に分けて、平均とばらつきを比べる}
+これまでの演習では、全データをまとめて見てきました。
+ここでは、データを \textbf{曜日ごと} に分けて見てみます。
+
+\textbf{作業内容}
+\vspace{-0.6em}
+\begin{enumerate}
+  \item ピボットテーブルを作成する
+  \item 行に \textbf{曜日} を配置する
+  \item 値に \textbf{重さ\_g（平均）} と \textbf{重さ\_g（件数）} を配置する
+\end{enumerate}
+
+\textbf{確認するポイント}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 曜日によって、平均値は同じか、違うか
+  \item 件数はどの曜日も同じか
+  \item 特定の曜日だけ、重め・軽めになっていないか
+\end{itemize}
+
+\textbf{ここで考えること}
+\vspace{-0.6em}
+\begin{itemize}
+  \item もし曜日で傾向が違うなら、全体の分布は何が混ざったものか
+\end{itemize}
+
+\noteT{演習④の狙い}{
+・「まとめて見る」と「分けて見る」で、見えるものが変わることを体験させる。\\
+・曜日という文脈情報が、分布の形に影響する可能性を意識させる。\\
+・次に、人ごとの違い（測定者のクセ）へ自然につなげる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide J: 演習⑤ 学生ID別に分けて見る
+% ----------------------------------------------------------------------------------------
+\begin{frame}{演習⑤：学生ID別に分けて、平均を比べる}
+次に、同じポテトでも
+\textbf{測定する人（学生）} によって違いがあるかを確認します。
+
+\textbf{作業内容}
+\vspace{-0.6em}
+\begin{enumerate}
+  \item ピボットテーブルを作成する
+  \item 行に \textbf{学生ID} を配置する
+  \item 値に \textbf{重さ\_g（平均）} を配置する
+\end{enumerate}
+
+\textbf{確認するポイント}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 学生ごとに、平均値は同じか、違うか
+  \item 明らかに「重め」「軽め」になっている人はいないか
+\end{itemize}
+
+\textbf{ここで考えること}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 全体の分布は、どのような分布が混ざった結果だろうか
+\end{itemize}
+
+\noteT{演習⑤の狙い}{
+・「人による違い」が、分布の形を作る一因であることを体験させる。\\
+・全体の分布＝1つの原因ではなく、複数の要因の重なりであると気づかせる。\\
+・次に、分布を「読む」ことの意味を言語化するまとめへ進む。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide K: 分布を読むとは何をすることか
+% ----------------------------------------------------------------------------------------
+\begin{frame}{分布を「読む」とは何をすることか}
+ここまでの演習を通して、私たちは
+ポテト重量データをさまざまな角度から見てきました。
+
+\textbf{分布を読むときの3つの視点}
+\vspace{-0.6em}
+\begin{itemize}
+  \item \textbf{中心：}
+        どのあたりの値が基準になっているか（平均・中央値）
+  \item \textbf{広がり：}
+        どの程度ばらついているか（最小〜最大、散らばり方）
+  \item \textbf{混ざり：}
+        曜日や人ごとの違いが重なっていないか
+\end{itemize}
+
+\textbf{重要なポイント}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 分布を見ることで、数値1つでは分からない実態が見えてくる
+  \item 全体の分布は、複数の要因が重なった結果であることが多い
+\end{itemize}
+
+\noteT{分布を読むまとめ}{
+・ここまでの演習（①〜⑤）を、3つの視点に整理して回収する。\\
+・新しい知識を足さず、「やったことを言葉にする」役割に徹する。\\
+・次のまとめスライドで、授業全体の目的に戻す準備とする。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide L: 本日のまとめ
+% ----------------------------------------------------------------------------------------
+\begin{frame}{本日のまとめ：記述統計でできるようになったこと}
+本日の授業では、30人×1週間のポテト重量データを使って、
+「記述統計」によるデータの読み取りを行いました。
+
+\textbf{今日できるようになったこと}
+\vspace{-0.6em}
+\begin{itemize}
+  \item データ全体を \textbf{代表値}（平均・中央値）で要約する
+  \item ヒストグラムを使って \textbf{分布の形} を確認する
+  \item 外れ値になりそうな値を見つけ、その \textbf{背景} を考える
+  \item 曜日や人ごとに \textbf{分けて見る} ことで、違いを捉える
+\end{itemize}
+
+\textbf{最も大切なポイント}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 数値1つだけでは、データの実態は分からない
+  \item 「分布を読む」ことで、現場で起きていることが見えてくる
+\end{itemize}
+
+\noteT{本日のまとめ}{
+・第2回の目的と、実際に行った演習を対応づけて整理する。\\
+・「平均だけでは足りない」という軸に必ず立ち戻る。\\
+・学生自身の体験として言語化させる。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide M: 次回予告
+% ----------------------------------------------------------------------------------------
+\begin{frame}{次回予告：分布の背後にある「起こりやすさ」}
+本日は、データの「形」を読み取るところまで進みました。
+
+次回は、
+\begin{itemize}
+  \item なぜ、このような分布の形になるのか
+  \item どの重さが、どのくらいの確率で起こるのか
+\end{itemize}
+を考えるために、\textbf{確率} を扱います。
+
+\textbf{次回のテーマ}
+\vspace{-0.6em}
+\begin{itemize}
+  \item 分布を「感覚」ではなく「数」で表す
+  \item 「起こりやすさ」を確率として表現する
+\end{itemize}
+
+本日のポテトの分布が、そのまま次回の出発点になります。
+
+\noteT{次回への接続}{
+・今日扱った分布が、そのまま次回の教材になることを明示する。\\
+・「確率＝別の話」ではなく、連続した学びであると印象づける。\\
+・第3回への心理的ハードルを下げる。
+}
+\end{frame}
+\end{document}

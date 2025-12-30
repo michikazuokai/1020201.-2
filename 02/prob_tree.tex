@@ -1,0 +1,33 @@
+% !TEX program = lualatex
+\documentclass[multi=tikzpicture, border=10pt]{standalone}
+
+% --- プリアンブル（ここ以外でusepackageを使うとエラーになります） ---
+\usepackage{luatexja}     % LuaLaTeXで日本語を使うために必須
+\usepackage{tikz}         % 描画パッケージ
+\usetikzlibrary{trees}    % 樹形図用のオプション
+
+% --- 本文 ---
+\begin{document}
+
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=30mm},
+    level 2/.style={sibling distance=15mm},
+    grow=right,
+    sloped
+]
+    \node {スタート}
+        child {
+            node {裏 (T)}
+            child { node {裏 (T)} edge from parent node[below] {1/2} }
+            child { node {表 (H)} edge from parent node[above] {1/2} }
+            edge from parent node[below] {1/2}
+        }
+        child {
+            node {表 (H)}
+            child { node {裏 (T)} edge from parent node[below] {1/2} }
+            child { node {表 (H)} edge from parent node[above] {1/2} }
+            edge from parent node[above] {1/2}
+        };
+\end{tikzpicture}
+
+\end{document}

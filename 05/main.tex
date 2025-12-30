@@ -1,0 +1,624 @@
+%----------------------------------------------------------------------------------------
+%  metropolis template (refactored)
+%----------------------------------------------------------------------------------------
+\documentclass[handout,aspectratio=169]{beamer}
+
+% \documentclass の直後で hyperref のオプションを渡す（metropolisでも安全）
+\PassOptionsToPackage{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue}{hyperref}
+
+\usetheme{metropolis}
+\metroset{block=fill, sectionpage=progressbar, progressbar=foot}
+
+% 背景色（tech のとき白など）: Pythonで差し込み
+\setbeamercolor{background canvas}{bg=white}
+
+%--------------------------
+% 日本語
+%--------------------------
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\usepackage{luatexja-ruby}
+\setsansjfont{Hiragino Sans}[BoldFont={Hiragino Sans W6}]
+
+%--------------------------
+% 基本パッケージ（重複なし）
+%--------------------------
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage[abs]{overpic}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{mathtools}
+\usepackage{longtable}
+\usepackage{pdfpages}
+\usepackage{etoolbox} % AtBeginEnvironment 等
+
+% minted（※ -shell-escape 必須）
+\usepackage{minted}
+\setminted{
+  frame=single,
+  framesep=2mm,
+  fontsize=\footnotesize,
+  breaklines=true
+}
+
+% （必要なときだけ）tcolorbox
+\usepackage[most]{tcolorbox}
+
+% hyperref は最後
+\usepackage{hyperref}
+
+%--------------------------
+% パス
+%--------------------------
+\newcommand{\assetpath}{/Volumes/NBPlan/TTC/授業資料/2025年度/}
+\graphicspath{{images/}{\assetpath/1020201.アルゴリズム２/05/images/}{../project_assets/images/}{../project_assets/emoji/emoji_pngs/}}
+
+%--------------------------
+% フッター
+%--------------------------
+\newcommand{\myfootertext}{1020201.アルゴリズム２/05}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox to \paperwidth{%
+    \hspace*{0.2cm}
+    \scriptsize\color{gray!50} \myfootertext
+    \hfill
+    \scriptsize\color{gray} \insertframenumber{} / \inserttotalframenumber
+    \hspace*{0.4cm}
+  }%
+  \vspace{1pt}
+}
+
+%--------------------------
+% TeacherFrame（外部）
+%--------------------------
+\usepackage{../teacherframe}
+
+%--------------------------
+% フレームタイトル：番号. タイトル
+% ※ ここで出すだけ。insertframetitle を再定義しない（安全）
+%--------------------------
+\setbeamertemplate{frametitle}{%
+  \vspace{0.6ex}%
+  \begin{beamercolorbox}[wd=\paperwidth,sep=0.5ex,leftskip=0.9em,rightskip=0.5em]{frametitle}%
+    \usebeamerfont{frametitle}%
+    \insertframenumber.\,\insertframetitle%
+  \end{beamercolorbox}%
+}
+
+%--------------------------
+% 表用：列型
+%--------------------------
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\raggedright\arraybackslash}m{#1}}
+
+%--------------------------
+% ブロック（必要なら）
+%--------------------------
+\definecolor{myblue}{HTML}{7488FF}
+\definecolor{mylightblue}{HTML}{E3EEFF}
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{bg=myblue, fg=white}
+\setbeamercolor{block body}{bg=mylightblue, fg=black}
+
+%--------------------------
+% 奇数ページのスライドのを表示する
+%（教示用だけでそれ以外はこの処理は動かない）
+%--------------------------
+% --- 教師用だけ、スライドを奇数開始に強制するトグル ---
+\newif\ifoddslideenforce
+\oddslideenforcefalse   % デフォルトOFF（pr/hoはOFF）
+
+% --- 再帰防止ガード ---
+\newif\ifoddslideguard
+\oddslideguardfalse
+
+% --- 偶数ページなら空白スライドを1枚入れて奇数に戻す ---
+\newcommand{\ensureoddslide}{%
+  \ifoddslideguard\relax\else
+    \oddslideguardtrue
+    \ifodd\value{page}\relax
+      % 何もしない（次が奇数）
+    \else
+      \begin{frame}[plain,noframenumbering]
+        \note{}% notes出力時に2枚消費させる保険
+      \end{frame}
+    \fi
+    \oddslideguardfalse
+  \fi
+}
+
+% --- frameが始まる直前に自動挿入（教師用だけ）---
+\BeforeBeginEnvironment{frame}{%
+  \ifoddslideenforce
+    \ensureoddslide
+  \fi
+}
+
+%--------------------------
+% note / noteT の「常時安全化」
+%  - tech 以外：\noteT は無視（エラーにならない）
+%  - tech：notesmode_tech で上書き定義
+%--------------------------
+\providecommand{\notetitletext}{}      % 既にあっても衝突しない
+\providecommand{\noteT}[2]{}           % デフォルトは何もしない
+
+% frame開始ごとにタイトル変数をクリア（前の noteT が残らないように）
+\AtBeginEnvironment{frame}{\gdef\notetitletext{}}
+
+%--------------------------
+% 切替（Pythonから差し込み）
+%--------------------------
+\mypausemodetrue
+\teachermodetrue
+\setbeameroption{show notes}
+%-------------
+
+% --- tech のときだけ noteT を有効化（テンプレートの \providecommand を上書き） ---
+\makeatletter
+\renewcommand{\noteT}[2]{%
+ \gdef\notetitletext{#1}%
+ \note{#2}%
+}
+% タイトル未指定のときのために初期化
+\renewcommand{\notetitletext}{}%
+
+\setbeamertemplate{note page}{%
+ \begin{minipage}{\linewidth}
+ \vspace{1.2ex} % タイトルを少し下げる（必要に応じて調整）
+ {\Large\bfseries
+ \ifx\notetitletext\@empty
+ \insertframetitle
+ \else
+ \notetitletext
+ \fi
+ }\par
+ \vspace{-1.2ex}
+ \rule{\linewidth}{0.8pt}\par
+ \vspace{0.8ex}
+ {\scriptsize \insertnote}
+ \end{minipage}
+}
+\makeatother
+
+%教師用のPDFは奇数ページからスライドを出力
+\oddslideenforcetrue
+
+
+%----------------------------------------------------------------------------------------
+% タイトル
+%----------------------------------------------------------------------------------------
+\title{ 05 確率の基礎②（独立・期待値） }
+\date{}
+\newcommand{\codedir}{\assetpath/1020201.アルゴリズム２/05}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+  \bigskip
+  \begin{center}
+    \ifteachermode 教師用 \fi
+  \end{center}
+\end{frame}
+
+% セクションページ（必要なら）
+\setbeamertemplate{section page}{
+  \begin{centering}
+    \vfill
+    \rule{\linewidth}{2pt}\par
+    \vspace{1ex}
+    {\usebeamerfont{section title}\Huge\bfseries \insertsection}\par
+    \vspace{1ex}
+    \rule{\linewidth}{2pt}\par
+    \vfill
+  \end{centering}
+}
+\setbeamerfont{section title}{size=\LARGE,series=\bfseries}
+
+\AtBeginSection[]{
+  \begin{frame}[plain,noframenumbering]
+    \sectionpage
+  \end{frame}
+}
+
+% 本編開始でフレーム番号を0から（必要なら）
+\setcounter{framenumber}{0}
+
+\input{emoji_macros}
+
+% @@@--(metropolis)--@@@
+
+% ----------------------------------------------------------------------------------------
+%   Slide 01: 本日のテーマ
+% ----------------------------------------------------------------------------------------
+\begin{frame}{独立・期待値}
+今日は、確率を使って「未来の予想」をする方法を学びます。
+
+\begin{itemize}
+  \item \textbf{\ruby{独立}{どくりつ}：} 前の結果が、次に「関係（かんけい）しない」こと。
+  \item \textbf{\ruby{期待値}{きたいち}：} 1回あたり「だいたいこれくらい」という見込み。
+  \item \textbf{実習：} 自分の手とExcelを使って、期待値を計算します。
+\end{itemize}
+
+「たった1回の結果」で\ruby{一喜一憂}{いっきいちゆう}せず、長い目でデータを見る力をつけましょう。
+
+\noteT{講義の狙い}{
+独立を知ることで勘違いを防ぎ、期待値で損得を数字で判断できるようにします。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 02: 独立とは：関係がないこと
+% ----------------------------------------------------------------------------------------
+\begin{frame}{独立：前の結果は、次に関係しない}
+2つの出来事があり、1回目の結果が2回目の確率を変えないとき、これを\textbf{独立}と言います。
+
+\begin{itemize}
+  \item \textbf{意味：} 前に何が起きても、次の確率は「リセット」されます。
+  \item \textbf{例：コイン投げ}
+\end{itemize}
+
+1回目に「表」が出たからといって、2回目に「裏」が出やすくなることはありません。コインは前のことを「覚えていない」からです。
+
+\noteT{独立}{
+独立 ＝ まわりの影響を受けない、というイメージを伝えます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 03: 【問い】「運（うん）」や「流れ」はある？
+% ----------------------------------------------------------------------------------------
+\begin{frame}{【問い】「そろそろ当たるはず」は本当？}
+あるゲームのガチャで、当たる確率が 10\% だとします。
+9回連続で外れました。
+
+\textbf{問い：10回目に当たる確率は、10\% より高くなっていますか？}
+
+\begin{enumerate}
+  \item 高くなっている（次こそは当たるはず！）
+  \item 低くなっている（今日は運が悪いから当たらない）
+  \item \textbf{変わらず 10\% である}
+\end{enumerate}
+
+\vspace{1em}
+（答えは次のスライドで説明します）
+
+\noteT{直感のミス}{
+人間が陥りやすい思い込みを指摘します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 04: 【答え】確率はいつも同じ
+% ----------------------------------------------------------------------------------------
+\begin{frame}{【答え】独立なら、確率はいつも同じ}
+正解は \textbf{「3. 変わらず 10\% である」} です。
+
+\begin{itemize}
+  \item \textbf{理由：} ガチャが独立な仕組みなら、1回目も10回目も、当たる確率は同じです。
+  \item \textbf{注意：} 「10回やれば1回は当たるだろう」というのは、やる前の予想です。\textbf{「目の前の1回」}の確率は、前の結果に関係なく 10\% のままです。
+\end{itemize}
+
+統計では、気持ちや運ではなく、この「独立」というルールで冷静に考えます。
+
+\noteT{解説}{
+単発の確率とセットの確率を分けて説明します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 05: 期待値とは何か
+% ----------------------------------------------------------------------------------------
+\begin{frame}{期待値：1回あたりの「平均的な見込み」}
+\textbf{期待値（Expected Value）}とは、1回やると「平均してどれくらいの結果になるか」を計算した数字です。
+
+\begin{itemize}
+  \item \textbf{イメージ：} もらえる金額や点数の「平均的な予想」。
+  \item \textbf{使い方：} 「その勝負（しょうぶ）をするべきか、やめるべきか」を\textbf{\ruby{判断}{はんだん}}する材料になります。
+\end{itemize}
+
+期待値を知ることで、損か得かを数字で見ることができます。
+
+\noteT{期待値}{
+期待値 ＝ 将来もらえる平均的な値、と定義します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 06: 期待値はどうやって計算する？
+% ----------------------------------------------------------------------------------------
+\begin{frame}{期待値の計算の手順}
+期待値は、次の「3ステップ」で計算します。
+
+\begin{block}{期待値の計算ルール}
+  \[ \text{期待値} = \sum ( \text{もらえる値} \times \text{その確率} ) \]
+\end{block}
+
+\textbf{計算の手順：}
+\begin{enumerate}
+  \item どんな「結果（値）」があるか全部書き出す。
+  \item それぞれの「確率」を調べる。
+  \item \textbf{「値 $\times$ 確率」}を計算して、全部足し算する。
+\end{enumerate}
+
+\noteT{手順}{
+掛け算をしてから足す、という流れを強調します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 07: 【例】サイコロを振ったときの期待値
+% ----------------------------------------------------------------------------------------
+\begin{frame}{期待値の計算例：サイコロの目}
+普通のサイコロを1回振るとき、出る目の期待値を求めます。
+
+\begin{table}[]
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+出る目 ($x$) & 1 & 2 & 3 & 4 & 5 & 6 \\ \hline
+確率 ($p$) & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{期待値の計算：}
+\[ E = (1 \times \frac{1}{6}) + (2 \times \frac{1}{6}) + (3 \times \frac{1}{6}) + (4 \times \frac{1}{6}) + (5 \times \frac{1}{6}) + (6 \times \frac{1}{6}) \]
+\[ E = \frac{1+2+3+4+5+6}{6} = \frac{21}{6} = \mathbf{3.5} \]
+
+\textbf{解釈：} サイコロを何回も振ると、1回あたりの平均は 3.5 に近づきます。
+
+\noteT{サイコロの例}{
+3.5 という目は実際には出ませんが、これが「平均的な見込み」であることを強調します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 08: 期待値と「平均」はどう違う？
+% ----------------------------------------------------------------------------------------
+\begin{frame}{平均と期待値}
+どちらも「データの真ん中」のことですが、時間の向きが違います。
+
+\begin{itemize}
+  \item \textbf{平均：} すでに起きた「過去」のデータの真ん中。
+  \item \textbf{期待値（今日）：} これから起きる「未来」の予想の真ん中。
+\end{itemize}
+
+\textbf{つながり：}
+過去と同じ割合で何かが起きるなら、\textbf{「過去の平均」は「未来の期待値」}と同じになります。
+
+
+\noteT{平均との差}{
+集計（過去）と予測（未来）の違いを伝えます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 09: 【実習1】期待値を計算してみよう
+% ----------------------------------------------------------------------------------------
+\begin{frame}{実習1：賞金の「見込み」を計算しよう}
+以下のくじがあります。1回あたりの期待値はいくらですか？
+
+\begin{itemize}
+  \item 1等：10,000円（確率 1\% ＝ 0.01）
+  \item 2等：500円（確率 10\% ＝ 0.10）
+  \item ハズレ：0円（確率 89\% ＝ 0.89）
+\end{itemize}
+
+\textbf{ヒント：}
+$10,000 \times 0.01 = 100$ などを計算して、最後に全部足し算してください。
+
+\noteT{実習1}{
+自分の手で計算させます。答えは150円。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 10: 【答え】期待値は 150円
+% ----------------------------------------------------------------------------------------
+\begin{frame}{【答え】期待値の活用方法}
+計算の答えは \textbf{150円} です。これがこのくじの「価値（かち）」です。
+
+\begin{itemize}
+  \item \textbf{判断のポイント：} 
+  \item もしこのくじが \textbf{200円} で売っていたら？
+  \item $\rightarrow$ 期待値（150円）より高いので、やり続けると損をします。
+\end{itemize}
+
+期待値を使えば、このように「損か得か」を冷静に比べることができます。
+
+\noteT{解説}{
+期待値が公正な価格を見極める道具になることを話します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 11: ビジネスでの使い方（プランの比較）
+% ----------------------------------------------------------------------------------------
+\begin{frame}{期待値で「仕事」を選ぶ}
+期待値を使えば、違う種類のチャンスを同じように比べられます。
+
+\textbf{どちらのプロジェクトが「得」か？}
+\begin{itemize}
+  \item \textbf{プランA：} 20\%で500万円儲かるが、80\%はゼロ。
+  \item \textbf{プランB：} 50\%で200万円儲かるが、50\%はゼロ。
+\end{itemize}
+
+\textbf{計算の結果：}
+どちらも期待値は \textbf{100万円} です。
+同じ土俵で比べることができました。
+
+\noteT{ビジネス}{
+期待値で選択肢を整理するメリットを伝えます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 12: 長い目で見ると、結果は安定する
+% ----------------------------------------------------------------------------------------
+\begin{frame}{繰り返すと期待値に近づく}
+期待値が「長い目の平均」と言われる理由です。
+
+\begin{itemize}
+  \item \textbf{性質：} 1回ごとの結果はバラバラでも、何百回と繰り返すと、実際の平均は「期待値」にそっくりになります。
+  \item \textbf{例：コイン投げ} 10回投げると偏ることもあるが、1万回投げれば表の割合はほぼ \textbf{50\%} になります。
+\end{itemize}
+
+（この詳しいルールは別の授業で学びます）
+
+
+
+\noteT{補足}{
+短期的な荒れと長期的な安定について教えます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 13: 【実習2】Excelで「独立」を見る
+% ----------------------------------------------------------------------------------------
+\begin{frame}{実習2：Excelでコイン投げをシミュレーション}
+Excelの乱数（ランダムな数字）を使って、コイン投げをします。
+
+\textbf{操作：}
+\begin{enumerate}
+  \item A1セルに \texttt{=RANDBETWEEN(0, 1)} と入力（0=裏、1=表）。
+  \item A100までコピーします。
+  \item B1セルに \texttt{=AVERAGE(A1:A100)} と入力します。
+\end{enumerate}
+
+F9キーを押すと数字が変わります。A列（個別の結果）は激しく変わりますが、B1（平均）は \textbf{0.5} の近くで安定しませんか？
+
+\noteT{実習2}{
+F9キーで再計算させ、独立性と安定性を体感させます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 14: 実習2の解説：独立と平均の姿
+% ----------------------------------------------------------------------------------------
+\begin{frame}{実習2のまとめ：ミクロはカオス、マクロは秩序}
+今のExcel操作で分かったことは次の通りです。
+
+\begin{itemize}
+  \item \textbf{個々のセル（独立）：} 0か1か全く予想できません。
+  \item \textbf{全体の平均（期待値）：} 100個集まると、ほぼ 0.5 になります。
+\end{itemize}
+
+統計学は、この「バラバラな出来事（独立事象）」をたくさん集めて、「確かな予測（期待値）」に変える学問です。
+
+\noteT{実習2解説}{
+個別の不確かさが集団の確かさに変わる面白さを伝えます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 15: 【実習3】Excelで「期待値」を算出しよう
+% ----------------------------------------------------------------------------------------
+\begin{frame}{実習3：Excelを使って期待値を計算する}
+先ほどの「実習1」のくじ引きを、Excelの表で作ってみましょう。
+
+\begin{enumerate}
+  \item A2:A4に「賞金（10000, 500, 0）」を入力。
+  \item B2:B4に「確率（0.01, 0.1, 0.89）」を入力。
+  \item C2に \texttt{=A2*B2} と入力し、C4までコピー。
+  \item C5に \texttt{=SUM(C2:C4)} で合計を出す。
+\end{enumerate}
+
+
+
+\noteT{実習3}{
+計算プロセスをExcelのセルに対応させることで、実務への繋がりを作ります。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 16: 実習3のメリット：データの変更に強い
+% ----------------------------------------------------------------------------------------
+\begin{frame}{Excelで計算するメリット}
+なぜ手計算ではなくExcelを使うのでしょうか？
+
+\begin{itemize}
+  \item \textbf{理由：} 確率や金額が変わっても、数字を打ち替えるだけで期待値がすぐに再計算されるからです。
+  \item \textbf{応用：} 「もしハズレの確率を少し減らしたら、期待値はいくら上がるか？」といったシミュレーションが瞬時に行えます。
+\end{itemize}
+
+期待値はビジネスの「シミュレーション」に欠かせないツールです。
+
+\noteT{実習3解説}{
+静的な計算から動的な分析への意識変容を促します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 17: 確率でよくあるミス：分母の勘違い
+% ----------------------------------------------------------------------------------------
+\begin{frame}{注意！ 確率の落とし穴}
+ミスを防ぐためのチェックポイントです。
+
+\begin{itemize}
+  \item \textbf{分母を決めない：} 必ず「全パターン」を先に数えましょう。
+  \item \textbf{主観を入れる：} 「昨日も雨だったから、今日は晴れるだろう」といった主観を捨て、客観的な比率で考えます。
+  \item \textbf{独立を忘れる：} 前の結果に引っ張られず、現在の確率を確認しましょう。
+\end{itemize}
+
+\noteT{ミス防止}{
+典型的なミスを言語化し、演習時の混乱を防ぎます。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 18: 記述統計と確率の関係（再確認）
+% ----------------------------------------------------------------------------------------
+\begin{frame}{まとめ：なぜ記述統計から始めたのか}
+これまでの学習を繋げましょう。
+
+\begin{itemize}
+  \item \textbf{記述統計：} 過去のデータを集計して「分布（形）」を見ました。
+  \item \textbf{確率：} その「分布」から、次に起こる「期待値」を考えました。
+\end{itemize}
+
+データから「形」を見つけ、そこから「将来」を見通す。これが統計学の流れです。
+
+\noteT{全体の繋がり}{
+第1回からの一貫性を確認します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 19: 本日のまとめ
+% ----------------------------------------------------------------------------------------
+\begin{frame}{今日のまとめ}
+\begin{itemize}
+  \item \textbf{独立：} 前の結果は次に影響しない。
+  \item \textbf{期待値：} $\text{期待値} = \sum (\text{値} \times \text{確率})$。長い目で見たときの平均。
+  \item \textbf{予測：} 過去のデータ（平均）から、未来の確率（期待値）を考えることができる。
+\end{itemize}
+
+期待値を使えば、不確実な未来も数字で考えることができます。
+
+\noteT{まとめ}{
+最重要ポイントを再度復唱します。
+}
+\end{frame}
+
+% ----------------------------------------------------------------------------------------
+%   Slide 20: 次回の予告
+% ----------------------------------------------------------------------------------------
+\begin{frame}{次は「データの形」を学びます}
+今日は「1回あたりの平均（期待値）」という「中心」の数字を学びました。
+
+\begin{itemize}
+  \item \textbf{次回（第5回）：\ruby{確率分布}{かくりつぶんぷ}}
+  \item \textbf{内容：} 期待値のまわりに、どのようにデータが広がっているか、その「形」をグラフで見ていきます。
+\end{itemize}
+
+お疲れ様でした。
+
+\noteT{次回予告}{
+期待値が次回の「グラフの中心」になることを予告します。
+}
+\end{frame}
+\end{document}

@@ -1,0 +1,104 @@
+.
+├── 02
+│   ├── ~$poteto1.xlsx
+│   ├── 02_実習.xlsx
+│   ├── 02_統計で何ができるか_pr.pdf
+│   ├── 02_統計で何ができるか_tech.pdf
+│   ├── 02_統計で何ができるか(時間配分).md
+│   ├── content_chatgpt.tex
+│   ├── content.tex
+│   ├── images
+│   │   ├── burger.jpg
+│   │   ├── burger.png
+│   │   ├── COUNTA.jpg
+│   │   ├── COUNTIF.png
+│   │   ├── sns.png
+│   │   ├── サイコロ.png
+│   │   ├── 測定尺度.png
+│   │   ├── 統計学.png
+│   │   ├── 秤に乗ったポテトの写真.png
+│   │   └── 流れ.png
+│   ├── main.synctex.gz
+│   ├── main.tex
+│   ├── poteto1.xlsx
+│   ├── prob_tree.aux
+│   ├── prob_tree.fdb_latexmk
+│   ├── prob_tree.fls
+│   ├── prob_tree.log
+│   ├── prob_tree.pdf
+│   ├── prob_tree.synctex.gz
+│   ├── prob_tree.tex
+│   └── 確率に関する教師用ノート.md
+├── 03
+│   ├── ~$poteto30.xlsx
+│   ├── 03_記述統計（集計・可視化・分布の把握）_pr.pdf
+│   ├── 03_記述統計（集計・可視化・分布の把握）_tech.pdf
+│   ├── chap2.xlsx
+│   ├── content copy.tex
+│   ├── content.tex
+│   ├── images
+│   │   ├── sales_histogram.png
+│   │   └── skewed_distribution.png
+│   ├── main.tex
+│   └── poteto30.xlsx
+├── 04
+│   ├── 04_確率の基礎①（場合の数・確率）_pr.pdf
+│   ├── 04_確率の基礎①（場合の数・確率）_tech.pdf
+│   ├── content.tex
+│   ├── images
+│   │   └── 樹形図.png
+│   ├── main.tex
+│   └── 確率の基礎①(時間配分).md
+├── 05
+│   ├── 05_確率の基礎②（独立・期待値）_pr.pdf
+│   ├── 05_確率の基礎②（独立・期待値）_tech.pdf
+│   ├── content copy.tex
+│   ├── content.tex
+│   ├── images
+│   │   └── 樹形図.png
+│   ├── main.tex
+│   └── 確率の基礎②(時間配分).md
+├── 06
+│   ├── 06_確率分布①（離散分布の考え方）_pr.pdf
+│   ├── 06_確率分布①（離散分布の考え方）_tech.pdf
+│   ├── content.tex
+│   ├── images
+│   │   ├── g1.png
+│   │   ├── g2.png
+│   │   ├── g3.png
+│   │   ├── g4.png
+│   │   ├── 二項分布グラフ.png
+│   │   └── 二項分布比較図.png
+│   ├── main.tex
+│   └── 確率分布①(時間配分).md
+├── 07
+│   ├── 07_確率分布②（正規分布）_pr.pdf
+│   ├── content copy.tex
+│   ├── content.tex
+│   ├── images
+│   │   ├── Figure_1.png
+│   │   ├── potatohist.png
+│   │   ├── poteto.jpg
+│   │   ├── poteto3.png
+│   │   ├── グラフ比較図.png
+│   │   ├── 正規分布３シグマ.png
+│   │   ├── 正規分布の基本グラフ.png
+│   │   ├── 正規分布比較図.png
+│   │   ├── 正規分布平均.png
+│   │   ├── 正規分布偏差.png
+│   │   └── 二項分布のn増加比較図.png
+│   ├── main.tex
+│   ├── nomaldiffave.py
+│   ├── normalcumulate.py
+│   ├── normaldiffmultis.py
+│   ├── normaldiffsigma.py
+│   ├── スライド構成.md
+│   └── スライド構成.pdf
+├── normal_68_95_997.png
+├── potato_31students.csv
+├── tree.txt
+├── アルゴリズム2シラバス.pdf
+├── テキストの目次_cleaned.txt
+└── 授業構成.md
+
+13 directories, 89 files

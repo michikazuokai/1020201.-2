@@ -1,0 +1,1046 @@
+%----------------------------------------------------------------------------------------
+%  metropolis template (refactored)
+%----------------------------------------------------------------------------------------
+\documentclass[aspectratio=169]{beamer}
+
+% \documentclass の直後で hyperref のオプションを渡す（metropolisでも安全）
+\PassOptionsToPackage{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue}{hyperref}
+
+\usetheme{metropolis}
+\metroset{block=fill, sectionpage=progressbar, progressbar=foot}
+
+% 背景色（tech のとき白など）: Pythonで差し込み
+
+
+%--------------------------
+% 日本語
+%--------------------------
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\usepackage{luatexja-ruby}
+\setsansjfont{Hiragino Sans}[BoldFont={Hiragino Sans W6}]
+
+%--------------------------
+% 基本パッケージ（重複なし）
+%--------------------------
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage[abs]{overpic}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric} % ← shapes.geometric を追加
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{mathtools}
+\usepackage{longtable}
+\usepackage{pdfpages}
+\usepackage{etoolbox} % AtBeginEnvironment 等
+\usetikzlibrary{calc}
+\usetikzlibrary{backgrounds}
+
+% minted（※ -shell-escape 必須）
+\usepackage{minted}
+\setminted{
+  frame=single,
+  framesep=2mm,
+  fontsize=\footnotesize,
+  breaklines=true
+}
+
+% （必要なときだけ）tcolorbox
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins}        % 高度なデザイン機能
+
+% hyperref は最後
+\usepackage{hyperref}
+
+% --- 1. カラーパレットの定義 ---
+\definecolor{CanvaGreen}{HTML}{2E7D32} % メインの濃い緑（タイトル・枠線）
+\definecolor{PaleGreen}{HTML}{F1F8E9}  % 背景の薄い緑
+\definecolor{MyDarkGreen}{HTML}{587a7f}
+\definecolor{DeepText}{HTML}{1C1C1C}   % 本文の文字色
+
+% --- 2. tcolorbox のデフォルト設定（全ボックスに適用） ---
+\tcbset{
+    enhanced,                          % 高度な装飾を有効化
+    colback=white,                 % 本文背景色
+    colframe=MyDarkGreen,               % 枠線の色
+    coltitle=white,                    % タイトル文字色
+    fonttitle=\bfseries\sffamily,      % タイトルを太字・ゴシック
+    boxrule=1pt,                       % 枠線の太さ
+    arc=2mm,                           % 角の丸み
+    left=3mm, right=3mm,               % 左右の余白
+    top=0.5mm, bottom=0.5mm,               % 本文の上下余白
+    toptitle=0.8mm, bottomtitle=0.5mm, % タイトル内の上下余白
+    before skip=0.8em, after skip=0.2em,   % ボックス前後の行間
+    shadow={0mm}{0mm}{0mm}{black!0}    % 影を完全に消してフラットに
+}
+
+
+%--------------------------
+% パス
+%--------------------------
+\newcommand{\assetpath}{/Volumes/NBPlan/TTC/授業資料/2025年度/}
+\graphicspath{{images/}{\assetpath/1020201.アルゴリズム２/13/images/}{../project_assets/images/}{../project_assets/emoji/emoji_pngs/}}
+
+%--------------------------
+% フッター
+%--------------------------
+\newcommand{\myfootertext}{1020201.アルゴリズム２/13}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox to \paperwidth{%
+    \hspace*{0.2cm}
+    \scriptsize\color{gray!50} \myfootertext
+    \hfill
+    \scriptsize\color{gray} \insertframenumber{} / \inserttotalframenumber
+    \hspace*{0.4cm}
+  }%
+  \vspace{1pt}
+}
+
+%--------------------------
+% TeacherFrame（外部）
+%--------------------------
+\usepackage{../teacherframe}
+
+%--------------------------
+% フレームタイトル：番号. タイトル
+% ※ ここで出すだけ。insertframetitle を再定義しない（安全）
+%--------------------------
+\setbeamertemplate{frametitle}{%
+  \vspace{0.6ex}%
+  \begin{beamercolorbox}[wd=\paperwidth,sep=0.5ex,leftskip=0.9em,rightskip=0.5em]{frametitle}%
+    \usebeamerfont{frametitle}%
+    \insertframenumber.\,\insertframetitle%
+  \end{beamercolorbox}%
+}
+
+%--------------------------
+% 表用：列型
+%--------------------------
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\raggedright\arraybackslash}m{#1}}
+
+%--------------------------
+% ブロック（必要なら）
+%--------------------------
+\definecolor{myblue}{HTML}{7488FF}
+\definecolor{mylightblue}{HTML}{E3EEFF}
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{bg=myblue, fg=white}
+\setbeamercolor{block body}{bg=mylightblue, fg=black}
+
+%========================================================
+% exampleblock（examplebox相当）だけの調整
+%  - タイトル文字：白
+%  - 背景色：現行のまま（bgは指定しない）
+%  - 本文 itemize：文字も●も黒（exampleblock内だけ）
+%========================================================
+
+% タイトル文字だけ白（背景は触らない）
+\setbeamercolor{block title example}{fg=white}
+
+% 本文の通常文字色は「現行のまま」を基本にする（必要なら黒にしてもよい）
+% ここは bg を触らないのが目的なので fg だけ調整可能
+\setbeamercolor{block body example}{fg=black}
+
+% exampleblock の中だけ itemize の色（●と文字）を黒に
+\AtBeginEnvironment{exampleblock}{%
+  \setbeamercolor{itemize item}{fg=black}
+  \setbeamercolor{itemize subitem}{fg=black}
+  \setbeamercolor{itemize subsubitem}{fg=black}
+  \setbeamercolor{item}{fg=black} % 念のため
+}
+
+% exampleblock を抜けたらテーマ標準に戻す（色が残る事故防止）
+\AtEndEnvironment{exampleblock}{%
+  \setbeamercolor{itemize item}{fg=normal text.fg}
+  \setbeamercolor{itemize subitem}{fg=normal text.fg}
+  \setbeamercolor{itemize subsubitem}{fg=normal text.fg}
+  \setbeamercolor{item}{fg=normal text.fg}
+}
+
+%--------------------------
+% 奇数ページのスライドのを表示する
+%（教示用だけでそれ以外はこの処理は動かない）
+%--------------------------
+% --- 教師用だけ、スライドを奇数開始に強制するトグル ---
+\newif\ifoddslideenforce
+\oddslideenforcefalse   % デフォルトOFF（pr/hoはOFF）
+
+% --- 再帰防止ガード ---
+\newif\ifoddslideguard
+\oddslideguardfalse
+
+% --- 偶数ページなら空白スライドを1枚入れて奇数に戻す ---
+\newcommand{\ensureoddslide}{%
+  \ifoddslideguard\relax\else
+    \oddslideguardtrue
+    \ifodd\value{page}\relax
+      % 何もしない（次が奇数）
+    \else
+      \begin{frame}[plain,noframenumbering]
+        \note{}% notes出力時に2枚消費させる保険
+      \end{frame}
+    \fi
+    \oddslideguardfalse
+  \fi
+}
+
+% --- frameが始まる直前に自動挿入（教師用だけ）---
+\BeforeBeginEnvironment{frame}{%
+  \ifoddslideenforce
+    \ensureoddslide
+  \fi
+}
+
+%--------------------------
+% note / noteT の「常時安全化」
+%  - tech 以外：\noteT は無視（エラーにならない）
+%  - tech：notesmode_tech で上書き定義
+%--------------------------
+\providecommand{\notetitletext}{}      % 既にあっても衝突しない
+\providecommand{\noteT}[2]{}           % デフォルトは何もしない
+
+% frame開始ごとにタイトル変数をクリア（前の noteT が残らないように）
+\AtBeginEnvironment{frame}{\gdef\notetitletext{}}
+
+%--------------------------
+% 切替（Pythonから差し込み）
+%--------------------------
+\mypausemodetrue
+\teachermodefalse
+
+%-------------
+
+\providecommand{\noteT}[2]{} % noteT を無視
+
+
+%--------------------------
+% 方眼紙（グリッド）をスライドに重ね
+%--------------------------
+\input{grid_debug}
+
+%-------------------------------------------------------------------------
+% 「ラインマーカー」そのものです。線の太さ・色・透明度を自由にできます。
+%
+% #1 色（省略可）
+% #2 下端 yshift
+% #3 上端 yshift
+% #4 文字
+% \marklineA{0.35ex}{1.55ex}{通常サイズ}
+% {\Large \marklineA{0.45ex}{2.10ex}{大きい文字}}
+%-------------------------------------------------------------------------
+\newcommand{\marklineA}[4][yellow]{%
+  \tikz[baseline=(X.base)]{%
+    \node[inner sep=0pt,outer sep=0pt] (X) {#4};
+    \begin{scope}[on background layer]
+      \fill[#1, opacity=0.35, rounded corners=0.8pt]
+        ([xshift=-0.15em,yshift=#2]X.south west) rectangle
+        ([xshift= 0.15em,yshift=#3]X.south east);
+    \end{scope}
+  }%
+}
+
+%----------------------------------------------------------------------------------------
+% タイトル
+%----------------------------------------------------------------------------------------
+\title{ 13 単回帰（最小二乗法）＋回帰のまとめ }
+\date{}
+\newcommand{\codedir}{\assetpath/1020201.アルゴリズム２/13}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+  \bigskip
+  \begin{center}
+    \ifteachermode 教師用 \fi
+  \end{center}
+\end{frame}
+
+% セクションページ（必要なら）
+\setbeamertemplate{section page}{
+  \begin{centering}
+    \vfill
+    \rule{\linewidth}{2pt}\par
+    \vspace{1ex}
+    {\usebeamerfont{section title}\Huge\bfseries \insertsection}\par
+    \vspace{1ex}
+    \rule{\linewidth}{2pt}\par
+    \vfill
+  \end{centering}
+}
+\setbeamerfont{section title}{size=\LARGE,series=\bfseries}
+
+\AtBeginSection[]{
+  \begin{frame}[plain,noframenumbering]
+    \sectionpage
+  \end{frame}
+}
+
+% 本編開始でフレーム番号を0から（必要なら）
+\setcounter{framenumber}{0}
+
+\input{emoji_macros}
+
+% @@@--(metropolis)--@@@
+% ===== 第12回：単回帰（最小二乗法）A-1〜B-5（箱減らし版）=====
+% ※「アルゴリズム2 Beamer共通仕様 v2025」準拠（frame群のみ）
+% ※tcolorbox は「ここぞ」のみに限定（目安：2〜3枚に1回）
+% ※teacherframeは使わない（noteTのみ）
+
+%----------------------------------------------------------------------------------------
+% A-1: 今日のテーマ（tcolorboxは1つだけ）
+%----------------------------------------------------------------------------------------
+\begin{frame}{回帰直線は「どう決める？」（最小二乗法）}
+\small
+
+\begin{tcolorbox}[title=今日の結論（先に言う）]
+回帰直線は、\textbf{ズレ（残差）の二乗の合計}が\\
+\textbf{いちばん小さくなる}ように決められています。
+\end{tcolorbox}
+
+\vspace{0.4em}
+\begin{itemize}
+  \item 前回：散布図から回帰直線を引き、式と $R^2$ を見て予測した
+  \item 今日は：その「直線の決め方」を理解する（\textbf{アルゴリズム}）
+  \item ゴール：Excelの結果をブラックボックスにせず、\textbf{なぜその線か}を説明できる
+\end{itemize}
+
+\vspace{0.3em}
+\textbf{到達目標}
+\begin{itemize}
+  \item 残差（$y-\hat{y}$）を「点と線のズレ」として説明できる
+  \item 残差平方和（SSE）を作り、\textbf{小さいほど良い}と説明できる
+  \item 「最小二乗法＝SSE最小の線」と言葉で言える
+\end{itemize}
+
+\noteT{A-1：第12回の立ち位置（運用）}{
+【目的】「今日は何を理解する回か」を最初に固定する（最小二乗法＝線の決め方）。\\
+【口頭補足】第11回は「使う（予測する）」回。第12回は「作り方（決め方）」の回。\\
+【実習仕様】cleanデータで、\hat{y}→残差→残差の二乗→SSE（合計）をExcelで作る（提出なし）。\\
+【運用】冒頭で確認：回帰は“判断”ではなく“予測”。（検定と混同させない）}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% A-2: ストーリー回収（箱なし）
+%----------------------------------------------------------------------------------------
+\begin{frame}{ストーリー：次の目標は「ポテト売上UP」}
+\small
+
+店長は、ポテトのばらつきを改善したあと、次の目標を立てました。
+
+\vspace{0.3em}
+\textbf{店長の目標：}
+\begin{itemize}
+  \item ポテトは利益率が高い
+  \item だから「\textbf{ポテトの売上を伸ばす}」ことを目標にする
+\end{itemize}
+
+\vspace{0.4em}
+そのために知りたいこと：
+\begin{itemize}
+  \item ハンバーガーの注文が増えると、ポテトの注文も増えるのか？
+  \item 関係があるなら、\textbf{来週の注文数}を\textbf{予測}できるか？
+\end{itemize}
+
+\vspace{0.4em}
+\emjpin 今日の視点：\textbf{関係を式（直線）にして予測に使う。}\\
+その直線を\textbf{どうやって決めるか}が今日のテーマ。
+
+\noteT{A-2：例を継続する理由（口頭補足）}{
+【目的】例（ハンバーガーショップ）を固定し、内容理解に集中させる。\\
+【口頭補足】例が変わると「状況理解」からやり直しになる。店長ストーリーで一貫させる。\\
+【実習仕様】x=バーガー数、y=ポテト数（clean / outlier の2データで扱う）。\\
+【運用】ここで「今日は予測の話」と言い切る（検定の“判断”と混同しやすい）。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% A-3: 前回回収（箱なし：比較を明瞭に）
+%----------------------------------------------------------------------------------------
+\begin{frame}{前回回収：検定は「判断」／回帰は「予測」（混同しない）}
+\small
+
+\textbf{前回（検定）と今回（回帰）は目的が違います。}
+
+\vspace{0.4em}
+\textbf{前回：仮説検定（判断）}
+\begin{itemize}
+  \item 「平均が基準と違うと言ってよいか？」を\textbf{珍しさ（p値）}で判断する
+  \item 結論は「棄却／棄却できない」で書く
+\end{itemize}
+
+\vspace{0.4em}
+\textbf{今回：回帰（予測）}
+\begin{itemize}
+  \item 「xが増えるとyはどう変わるか？」を\textbf{式（回帰直線）}で表す
+  \item 式を使って\textbf{未来のy}を予測する
+\end{itemize}
+
+\vspace{0.4em}
+\emjpin 今日は p値は使わない。代わりに「\textbf{ズレが小さい線}」を考える。
+
+\noteT{A-3：混同防止（短く強く）}{
+【目的】検定と回帰の混同を最初に止める（留学生ほど混ざりやすい）。\\
+【口頭補足】検定＝結論を“判断”。回帰＝値を“予測”。今日はp値は使わない。\\
+【実習仕様】回帰では「ズレ（残差）」を作り、その二乗の合計（SSE）で線の良さを比べる。\\
+【運用】確認質問：検定は何？→判断。回帰は何？→予測。今日のキーワードは？→残差・二乗・最小。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% B-4: 問い（ここぞでtcolorbox 1つ）
+%----------------------------------------------------------------------------------------
+\begin{frame}{問い：同じ散布図に「線」は何本でも引ける}
+\small
+
+散布図を見ると「だいたい右上がり」に見えてきます。\\
+でも、\textbf{直線は1本に決まっていません}。
+
+\vspace{0.6em}
+\begin{tcolorbox}[title=問い]
+この散布図に引く直線として、\\
+\textbf{どの線が「良い線」でしょうか？}
+\end{tcolorbox}
+
+\vspace{0.4em}
+\begin{itemize}
+  \item 傾きが少し違う線／上下にずれた線……どれも「それっぽく」見える
+  \item だから、見た目ではなく\textbf{評価基準（ルール）}が必要
+\end{itemize}
+
+% ---- 図の提案 ---------------------------------------------------------------
+% 同じ散布図に候補の直線を3本重ねる（傾き違い or 切片違い）
+% → 次スライドの「ズレを数で決める」へ接続しやすい
+% ---------------------------------------------------------------------------
+
+\noteT{B-4：問いの狙い（運用）}{
+【目的】「回帰直線は1本に決まる」という前提を崩し、評価基準が必要だと気づかせる。\\
+【口頭補足】学生に質問：「線A・B・Cどれが良い？」→理由も言わせる（“近い”“ずれが小さい”を引き出す）。\\
+【実習仕様】後半で、Excelで「ズレ」を数値化して比べる（SSEまで作る）。\\
+【運用】ここではまだ数式を出さない。まず“線の良さを決めたい”という欲求を作る。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% B-5: 評価の方針（箱なし）
+%----------------------------------------------------------------------------------------
+\begin{frame}{評価の方針：良い線＝点に近い（ズレが小さい）を数で決める}
+\small
+
+\textbf{良い線}を決めるために、次の方針を使います。
+
+\vspace{0.4em}
+\emjpin \textbf{良い線}とは、点と線の\textbf{ズレ}が\textbf{全体として小さい}線。
+
+\vspace{0.5em}
+ズレを「数」で決めるために、次を行います。
+\begin{itemize}
+  \item 各点について「ズレ」を測る
+  \item 全部の点のズレを\textbf{まとめて}1つの数にする
+  \item その数が\textbf{いちばん小さい線}を選ぶ
+\end{itemize}
+
+\vspace{0.5em}
+次に出てくる言葉：
+\begin{itemize}
+  \item 点と線のズレを \textbf{残差（ざんさ）} と呼ぶ
+  \item 次スライドで、残差を\textbf{図と言葉と式}で定義する
+\end{itemize}
+
+\noteT{B-5：評価基準を先に固定（口頭補足）}{
+【目的】回帰の本体は「線を決めるルール」だと理解させる。\\
+【口頭補足】良い線＝“当たる保証”ではなく、“ズレが小さい線”。（未来の保証ではない）\\
+【実習仕様】残差→残差の二乗→合計（SSE）をExcelで作り、線の良さを比較する。\\
+【運用】次スライドにつなぐ一言：「ズレ＝残差。まず“残差って何？”を定義する」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% C-6: 残差の定義（ズレを定義する）
+%----------------------------------------------------------------------------------------
+\begin{frame}{残差の定義：残差＝実測 $y$ − 予測 $\hat{y}$（縦のズレ）}
+\small
+
+回帰直線（予測の線）を引くと、各点には「ズレ」が生まれます。\\
+このズレを\textbf{残差（ざんさ）}と呼びます。
+
+\vspace{0.6em}
+\begin{center}
+{\Large
+\[
+\text{残差 } e = y - \hat{y}
+\]
+}
+\end{center}
+
+\vspace{0.3em}
+\begin{itemize}
+  \item $y$：実測値（実際に観測された値）
+  \item $\hat{y}$：予測値（直線が予測する値）
+  \item 残差 $e$ は、\textbf{点と線の「縦方向の距離」}（上下のズレ）
+\end{itemize}
+
+\vspace{0.6em}
+\emjpin 回帰直線は「全部を完全に当てる線」ではない。\\
+だから、残差（ズレ）は必ず出る。
+
+% ---- 図の提案 ---------------------------------------------------------------
+% 図案（おすすめ）：1つの点から回帰直線へ「縦の矢印（残差）」を描く
+%  ・点の座標： (x, y)
+%  ・線上の予測値： (x, yhat)
+%  ・縦の距離に e = y - yhat とラベル
+% ---------------------------------------------------------------------------
+
+\noteT{C-6：残差を「距離」として固定（運用）}{
+【目的】残差を「式の引き算」ではなく「点と線の縦のズレ」として理解させる。\\
+【口頭補足】横方向ではなく縦方向のズレを見る（xは説明変数として固定して考える）。\\
+【実習仕様】Excelで各行に $\hat{y}$（予測）列を作り、残差列 $e=y-\hat{y}$ を作る。\\
+【運用】一言確認：「残差って何？」→「実測−予測（縦のズレ）」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% C-7: 残差の符号（相殺が起きる）
+%----------------------------------------------------------------------------------------
+\begin{frame}{残差の符号：線より上は＋／下は−（そのまま足すと相殺する）}
+\small
+
+残差には\textbf{符号（プラス／マイナス）}があります。
+
+\vspace{0.4em}
+\begin{itemize}
+  \item 点が直線より\textbf{上}にある：$y > \hat{y}$ なので、\textbf{残差は＋}
+  \item 点が直線より\textbf{下}にある：$y < \hat{y}$ なので、\textbf{残差は−}
+\end{itemize}
+
+\vspace{0.6em}
+ここで大事な問題が起きます。
+
+\vspace{0.4em}
+\emjpin 残差を\textbf{そのまま足す}と、\\
+＋と−が\textbf{打ち消し合って}（相殺して）小さく見えてしまう。
+
+\vspace{0.6em}
+\textbf{例（イメージ）}
+\begin{itemize}
+  \item $+5$ と $-5$ を足すと $0$（ズレがないように見える）
+  \item でも実際には、上下に\textbf{大きくズレている}
+\end{itemize}
+
+% ---- 次への橋渡し（ここではtcolorboxを使わない） ---------------------------
+% 次スライドで「相殺を防ぐために二乗する（残差^2）」へ自然につなぐ
+% ---------------------------------------------------------------------------
+
+\noteT{C-7：なぜ“そのまま足せない”のか（運用）}{
+【目的】「相殺」という問題を先に理解させ、次の“二乗”が必要な理由を作る。\\
+【口頭補足】ズレは“方向”ではなく“大きさ”を評価したい（だから符号は邪魔になる）。\\
+【実習仕様】Excelで残差列を作った後、残差の二乗を作る（相殺を防ぐ準備）。\\
+【運用】次につなぐ問い：「相殺を防ぐにはどうする？」→「二乗する」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% D-8: 問題：残差の合計は基準にならない
+%----------------------------------------------------------------------------------------
+\begin{frame}{問題：残差の合計は「＋と−」で打ち消し合い、基準にならない}
+\small
+
+前スライドで見た通り、残差 $e=y-\hat{y}$ には\textbf{＋と−}があります。\\
+そのため、残差をそのまま足すと「ズレの大きさ」を表せません。
+
+\vspace{0.6em}
+\textbf{なぜダメか（相殺）}
+\begin{itemize}
+  \item 例：$+5$ と $-5$ を足すと $0$
+  \item 合計が $0$ でも、実際には上下に\textbf{大きくズレている}
+\end{itemize}
+
+\vspace{0.6em}
+\emjpin だから、回帰では「符号つきの合計」ではなく、\\
+\textbf{ズレの大きさ}を足し合わせる方法が必要。
+
+\noteT{D-8：二乗への導入（運用）}{
+【目的】「合計では評価できない」という問題意識を確定し、二乗の必然性を作る。\\
+【口頭補足】ズレは“方向”ではなく“大きさ”を評価したい、という言い方に統一する。\\
+【実習仕様】この直後に「残差の二乗」を作らせ、相殺が消えることを体感させる。\\
+【運用】ここで問いかけ：「相殺しない方法は？」→ 次スライドで二乗を提示。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% D-9: 二乗する理由（ここぞ：tcolorbox 1つ）
+%----------------------------------------------------------------------------------------
+\begin{frame}{二乗する理由：なぜ $(y-\hat{y})^2$ なのか}
+\small
+
+相殺を防ぐために、残差を\textbf{二乗}してから足し合わせます。
+
+\vspace{0.6em}
+\begin{tcolorbox}[title=二乗する3つの理由（ここだけ覚える）]
+\begin{enumerate}
+  \item \textbf{マイナスが消える}（相殺しない）
+  \item \textbf{大きいズレを強く罰する}（大外れを重く扱う）
+  \item \textbf{計算として扱いやすい}（後で「最小」を作りやすい）
+\end{enumerate}
+\end{tcolorbox}
+
+\vspace{0.4em}
+\emjpin 回帰は「全部当てる」ではなく、\\
+\textbf{ズレをできるだけ小さくする}ことが目的。
+
+\noteT{D-9：二乗の納得（口頭補足）}{
+【目的】二乗を“暗記”ではなく“必要性”として納得させる。\\
+【口頭補足】③は深掘りしない。「二乗だと数学的に最小を作りやすい」程度で止める。\\
+【実習仕様】残差列と残差の二乗列を並べ、相殺が消えることを確認させる。\\
+【運用】学生に一言で言わせる：「なぜ二乗？」→「相殺しない／大ズレを重くする」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% D-10: 残差平方和（SSE）の定義
+%----------------------------------------------------------------------------------------
+\begin{frame}{残差平方和（SSE）：ズレの大きさの合計を1つの数にする}
+\small
+
+残差を二乗して、\textbf{全部足した}数を作ります。\\
+これが「線の良さ」を表す指標になります。
+
+\vspace{0.6em}
+\begin{center}
+{\Large
+\[
+\mathrm{SSE}=\sum (y-\hat{y})^2
+\]
+}
+\end{center}
+
+\vspace{0.4em}
+\begin{itemize}
+  \item 各点のズレ：$(y-\hat{y})$
+  \item そのズレの大きさ：$(y-\hat{y})^2$
+  \item それを全部足す：$\sum (y-\hat{y})^2$
+\end{itemize}
+
+\vspace{0.6em}
+\emjpin \textbf{SSEが小さいほど、点に近い（ズレが小さい）線}。
+
+\noteT{D-10：SSEを「1つの数」にする意味（運用）}{
+【目的】多数の点のズレを「比較できる1つの数」にまとめる発想を固定する。\\
+【口頭補足】SSEは「ズレの大きさの合計」。単位は $y$ の二乗になるが、ここでは深掘りしない。\\
+【実習仕様】Excelで残差の二乗を作り、SUMでSSEを作成（線ごとにSSE比較も可能）。\\
+【運用】次スライドにつなぐ問い：「良い線は？」→「SSEが最小の線」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% D-11: 最小二乗法（今日の結論の回収）
+%----------------------------------------------------------------------------------------
+\begin{frame}{最小二乗法：SSEが最小になる直線が「回帰直線」}
+\small
+
+同じ散布図に引ける直線は何本もあります。\\
+その中から\textbf{1本}を選ぶルールが、最小二乗法です。
+
+\vspace{0.6em}
+\textbf{最小二乗法（言葉での定義）}
+\begin{itemize}
+  \item 直線ごとに SSE（残差平方和）を計算する
+  \item \textbf{SSEがいちばん小さい直線}を選ぶ
+\end{itemize}
+
+\vspace{0.6em}
+\emjpin つまり、回帰直線は\\
+\textbf{「ズレの二乗の合計が最小」}になるように決まる。
+
+\vspace{0.6em}
+\textbf{注意（ここで止める）}
+\begin{itemize}
+  \item 今日は「最小にする考え方」を理解する回
+  \item 次の塊で「実際にどうやって最小を作るか（Excelで体験）」へ進む
+\end{itemize}
+
+\noteT{D-11：結論の回収（運用）}{
+【目的】A-1で先に出した結論を、SSEの定義を経て“納得”として回収する。\\
+【口頭補足】ここで微分や公式導出は不要。最小二乗法＝「SSEが最小」と言えれば十分。\\
+【実習仕様】ExcelでSSEを実際に計算し、線を変えるとSSEが変わることを体感させる。\\
+【運用】ここで一言確認：「回帰直線はどう決まる？」→「SSEが最小の線」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% E-12: 模式図（最小のイメージ）
+%----------------------------------------------------------------------------------------
+\begin{frame}{直感：線を少し動かすとSSEが増える／減る（“最小”のイメージ）}
+\small
+
+回帰直線は「当てずっぽう」で決めているのではなく、\\
+\textbf{SSE（ズレの二乗の合計）を最小にする}というルールで決まります。
+
+\vspace{0.4em}
+\begin{columns}
+  %-------------------------------
+  % 左：散布図＋線を動かすイメージ
+  %-------------------------------
+  \begin{column}{0.54\linewidth}
+  \centering
+  \begin{tikzpicture}[x=0.85cm,y=0.85cm]
+    % axes
+    \draw[->] (0,0) -- (4.4,0) node[below] {\scriptsize $x$};
+    \draw[->] (0,0) -- (0,3.6) node[left] {\scriptsize $y$};
+
+    % points
+    \fill (1,1.6) circle (2pt);
+    \fill (2,1.9) circle (2pt);
+    \fill (3,2.9) circle (2pt);
+    \fill (3.6,2.2) circle (2pt);
+
+    % three candidate lines (same slope, shifted)
+    \draw[thick] (0.3,0.8) -- (4.2,3.3);   % middle (good)
+    \draw[dashed] (0.3,1.2) -- (4.2,3.7); % shifted up
+    \draw[dashed] (0.3,0.4) -- (4.2,2.9); % shifted down
+
+    \node at (3.95,2.85) {\scriptsize 良さげ};
+    \node at (3.95,3.65) {\scriptsize 上にずらす};
+    \node at (3.95,1.85) {\scriptsize 下にずらす};
+  \end{tikzpicture}
+
+  \vspace{0.2em}
+  \scriptsize
+  直線を上下に動かすだけでも、\\
+  点とのズレが変わる
+  \end{column}
+
+  %-------------------------------
+  % 右：SSEが最小になる「谷」のイメージ
+  %-------------------------------
+  \begin{column}{0.44\linewidth}
+  \centering
+  \begin{tikzpicture}[x=1.0cm,y=1.0cm]
+    % axes
+    \draw[->] (0,0) -- (4.2,0) node[below] {\scriptsize 線の位置（例：切片）};
+    \draw[->] (0,0) -- (0,3.2) node[left] {\scriptsize SSE};
+
+    % parabola (valley)
+    \draw[thick, domain=0.4:3.8, samples=60]
+      plot (\x, {0.55*(\x-2.2)*(\x-2.2)+0.6});
+
+    % minimum point
+    \fill (2.2,0.6) circle (2.4pt);
+    \draw[dashed] (2.2,0) -- (2.2,0.6);
+    \node[below] at (2.2,0) {\scriptsize 最小};
+
+    \node[align=left] at (2.55,2.55) {\scriptsize SSEは\\\scriptsize “谷”になる};
+  \end{tikzpicture}
+
+  \vspace{0.2em}
+  \scriptsize
+  SSEがいちばん小さい場所が1つ決まる
+  \end{column}
+\end{columns}
+
+\noteT{E-12：最小の直感を作る（運用）}{
+【目的】「最小二乗法＝SSE最小」を“谷のイメージ”で直感的に理解させる。\\
+【口頭補足】右図は「SSEが最小になる場所がある」というイメージ図（厳密な導出ではない）。\\
+【実習仕様】後でExcelで線（トレンドライン）を出す＝SSE最小の線が自動で選ばれる、と接続する。\\
+【運用】ここで確認：「回帰直線はどう決まる？」→「SSEが最小の線」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% E-13: ミニ例（3点）SSE比較
+%----------------------------------------------------------------------------------------
+\begin{frame}{ミニ例（3点）：線Aと線BでSSEを比べる（計算は最小限）}
+\small
+
+3つの点があるとします（散布図の一部だと思ってOK）：
+
+\vspace{0.2em}
+\begin{center}
+\begin{tabular}{c|ccc}
+\hline
+点 & $(x,y)$ & 線Aの$\hat{y}$ & 線Bの$\hat{y}$\\
+\hline
+1 & $(1,2)$ & $2$ & $1$ \\
+2 & $(2,2)$ & $3$ & $2$ \\
+3 & $(3,4)$ & $4$ & $3$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-1.0em}
+ここで2本の候補：
+\vspace{-0.5em}
+\begin{itemize}
+  \item 線A：$\hat{y}=x+1$
+  \item 線B：$\hat{y}=x$
+\end{itemize}
+
+\vspace{-0.4em}
+\textbf{残差} $e=y-\hat{y}$ と \textbf{SSE}（残差の二乗の合計）を比べます。
+
+\vspace{-0.2em}
+\begin{center}
+\begin{tabular}{c|cc|cc}
+\hline
+点 & $e_A$ & $e_A^2$ & $e_B$ & $e_B^2$\\
+\hline
+1 & $2-2=0$   & $0$ & $2-1=1$   & $1$ \\
+2 & $2-3=-1$  & $1$ & $2-2=0$   & $0$ \\
+3 & $4-4=0$   & $0$ & $4-3=1$   & $1$ \\
+\hline
+合計（SSE） & \multicolumn{2}{c|}{\textbf{1}} & \multicolumn{2}{c}{\textbf{2}} \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.2em}
+\emjpin \textbf{SSEが小さい線Aの方が「良い線」}（この例ではAが勝ち）
+
+\noteT{E-13：SSE比較を“手で一回だけ”やる理由（運用）}{
+【目的】SSEが「点のズレの二乗の合計」で、比較に使えることを具体例で固定する。\\
+【口頭補足】ここでは導出はしない。「SSEで比べると、良い線が決まる」を体感させる。\\
+【実習仕様】Excelで同じことを大量の点で自動的にやっている（手作業はこの例だけ）。\\
+【運用】計算は最小限：残差→二乗→合計、の流れだけを覚えさせる。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% E-14: Excelとつながる（トレンドライン＝SSE最小）
+%----------------------------------------------------------------------------------------
+\begin{frame}{Excelとつながる：トレンドラインの式＝SSE最小の結果}
+\small
+
+Excelで散布図に「近似曲線（トレンドライン）」を追加すると、\\
+直線の式 $\hat{y}=ax+b$ が表示できます。
+
+\vspace{-0.6em}
+\begin{tcolorbox}[title=ここがポイント]
+Excelのトレンドラインは、裏側で \textbf{SSEが最小になる}ように\\
+$a$（傾き）と $b$（切片）を自動で決めている。
+\end{tcolorbox}
+
+\vspace{-0.1em}
+\textbf{つまり：}
+\vspace{-0.2em}
+\begin{itemize}
+  \item 私たちがやってきた「SSEで良い線を決める」ルールを
+  \item Excelが\textbf{自動で実行}して、式を出している
+\end{itemize}
+
+\vspace{-0.5em}
+\textbf{実習でやる操作（次の塊につながる）}
+\begin{itemize}
+  \item 散布図を作る（x=バーガー数、y=ポテト数）
+  \item 近似曲線（線形）を追加し、「\textbf{数式を表示}」「\textbf{$R^2$を表示}」
+  \item その式で $\hat{y}$ を作り、残差とSSEを作る
+\end{itemize}
+
+\noteT{E-14：Excelのブラックボックスを壊す（運用）}{
+【目的】「トレンドラインの式＝勝手に出てくる数字」ではなく「SSE最小の結果」と結びつける。\\
+【口頭補足】Excelは“魔法”ではない。残差の二乗を全部足して最小になる線を選んでいるだけ。\\
+【実習仕様】散布図→トレンドライン→式/Rの二乗表示→$\hat{y}$列→残差列→残差の二乗列→SSE（SUM）。\\
+【運用】次の実習へ自然につなぐ：「じゃあExcelで同じことをやってみよう」。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% F-15: 実習① 全体手順（SSEを自分で作る）
+%----------------------------------------------------------------------------------------
+\begin{frame}{実習①（clean）：SSEを自分で作って「良い線」を理解する（全体手順）}
+\small
+
+Excelのトレンドラインは「SSEが最小の直線」を自動で出しています。\\
+実習①では、その中身を\textbf{自分の手で}再現します。
+
+\vspace{0.6em}
+\begin{tcolorbox}[title=実習①のゴール（ここだけ）]
+\textbf{予測値 $\hat{y}$ → 残差 → 残差$^2$ → 合計（SSE）} を作り、\\
+\textbf{SSEが小さいほど良い線}だと確かめる
+\end{tcolorbox}
+
+\vspace{0.5em}
+\begin{enumerate}
+  \item 散布図から回帰式を表示し、傾き $a$ と切片 $b$ を取り出す
+  \item 各行で $\hat{y}=ax+b$ を計算して「予測値」列を作る
+  \item 残差 $e=y-\hat{y}$ 列を作る（縦のズレ）
+  \item 残差$^2$ 列を作る（マイナスを消す＋大ズレを強く罰する）
+  \item 残差$^2$ を合計して \textbf{SSE} を出す（SUM）
+\end{enumerate}
+
+\vspace{0.3em}
+\emjpin \textbf{最後に $a$ や $b$ を少し変えて、SSEが増えることを確認する}
+
+\noteT{F-15：実習①の位置づけ（運用）}{
+【目的】「SSE最小」がExcelの裏側のルールだと体験で納得させる。\\
+【口頭補足】ここでは“導出”しない。SSEを作って比較するだけで十分。\\
+【実習仕様】データはclean版を使用（外れ値なしで成功体験を作る）。\\
+【運用】このスライドを見せたら、すぐExcel操作へ移る（説明疲れ対策）。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% F-16: 実習①-1（clean）予測値 y-hat 列を作る
+%----------------------------------------------------------------------------------------
+\begin{frame}{実習①-1（clean）：$\hat{y}$（予測値）列を作る（回帰式を使う）}
+\small
+
+まず、散布図にトレンドライン（線形）を追加し、\\
+\textbf{数式 $\hat{y}=ax+b$ を表示}して $a$ と $b$ をメモします。
+
+\vspace{0.6em}
+\begin{itemize}
+  \item $x$：バーガー注文数（説明変数）
+  \item $y$：ポテト注文数（目的変数）
+  \item $\hat{y}$：回帰式が出す「予測値」
+\end{itemize}
+
+\vspace{0.5em}
+\begin{tcolorbox}[title=Excelで作る列（例）]
+\textbf{（例）} $a$ と $b$ をセルに置く：\\
+\quad $a$ を \texttt{H1}、$b$ を \texttt{H2} に入力\\
+\textbf{予測値列}（例：\texttt{D2}）\\
+\quad \texttt{=\$H\$1*A2 + \$H\$2}
+\end{tcolorbox}
+
+\vspace{0.3em}
+\emjpin \textbf{ポイント：} \$ を付けて $a,b$ のセルを固定すると、下までコピーできる
+
+\noteT{F-16：操作の落とし穴（運用）}{
+【目的】$\hat{y}$列（予測値）を全員が確実に作れるようにする。\\
+【口頭補足】$\hat{y}$は「点の中心を通る線が出す予測」。実測$y$とは一致しない。\\
+【実習仕様】(1)散布図作成→(2)線形近似→(3)数式表示→(4)$a,b$をセルへ→(5)$\hat{y}$列作成。\\
+【運用】$a,b$を式に直書きさせるとミスが増えるので、セル参照（\$固定）を推奨。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% F-17: 実習①-2 残差・残差^2・SSE
+%----------------------------------------------------------------------------------------
+\begin{frame}{実習①-2（clean）：残差・残差$^2$を作り、SSEを計算する}
+\small
+
+\textbf{残差}は「実測」と「予測」のズレです。\\
+回帰直線がどれだけ点に近いかを、残差で数にします。
+
+\vspace{0.5em}
+\begin{tcolorbox}[title=作る列（定義）]
+残差：\quad $e=y-\hat{y}$（縦のズレ）\\
+残差$^2$：\quad $e^2$（マイナスを消して足せるようにする）\\
+SSE：\quad $\sum e^2$（残差$^2$の合計）
+\end{tcolorbox}
+
+\vspace{0.4em}
+\textbf{Excel例（列が違ってもOK）}
+\begin{itemize}
+  \item 残差列（例：\texttt{E2}）：\quad \texttt{=B2 - D2} \hfill（$y-\hat{y}$）
+  \item 残差$^2$列（例：\texttt{F2}）：\quad \texttt{=E2$^2$} \ \textbf{または}\ \texttt{=POWER(E2,2)}
+  \item SSE（例：\texttt{F1}）：\quad \texttt{=SUM(F2:F31)}
+\end{itemize}
+
+\vspace{0.3em}
+\emjpin \textbf{SSEが小さいほど}、点に近い（＝良い線）
+
+\noteT{F-17：ここで固定したい言葉（運用）}{
+【目的】残差→二乗→合計（SSE）の意味を“列”として定着させる。\\
+【口頭補足】残差の合計は相殺するのでダメ。二乗してから足す。\\
+【実習仕様】全員がSSEを1つのセルで出せたら次へ。数値が合わない学生は残差列を確認させる。\\
+【運用】$^（上付き）$はエラーになりやすいので、必要ならPOWERを推奨。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% F-18: 実習①-3 a,bを少し変えてSSE増加を確認
+%----------------------------------------------------------------------------------------
+\begin{frame}{実習①-3（clean）：$a$や$b$を少し変えて、SSEが増えることを確認する}
+\small
+
+ここが「体験で納得」パートです。\\
+今の回帰式は、Excelが\textbf{SSEが最小}になるように選んだ直線でした。
+
+\vspace{0.6em}
+\begin{tcolorbox}[title=やること（超シンプル）]
+$a$ または $b$ を\textbf{少しだけ}動かして、SSEがどう変わるかを見る\\
+（例）$a$を +0.1 / $b$を +1 など
+\end{tcolorbox}
+
+\vspace{0.4em}
+\textbf{確認のしかた}
+\begin{itemize}
+  \item $a,b$ を変える \ \ $\Rightarrow$ \ \ $\hat{y}$列が変わる
+  \item $\hat{y}$が変わる \ \ $\Rightarrow$ \ \ 残差・残差$^2$が変わる
+  \item その結果、\textbf{SSEが増える}（多くの場合）
+\end{itemize}
+
+\vspace{0.4em}
+\emjpin \textbf{観察の結論：} 元の$a,b$が「SSEを最小にする」直線だった
+
+\noteT{F-18：実習①の締め（運用）}{
+【目的】「最小」の意味を“数値の増減”で納得させる（説明ではなく体験）。\\
+【口頭補足】少し動かすだけでSSEが増える＝“谷の底”にいた、ということ。\\
+【実習仕様】(1)元のSSEをメモ→(2)$a$を少し変える→SSE再確認→(3)$b$も少し変える。\\
+【運用】変え幅が大きいと混乱するので「少しだけ」を強調。早い学生には「どちら方向に動かすと増え方が大きい？」を追加。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% G-19: 実習②（outlier）二乗は外れ値に弱い＝線が引っ張られる
+%----------------------------------------------------------------------------------------
+\begin{frame}{実習②（outlier）：二乗は外れ値に弱い（線が引っ張られる）}
+\small
+
+実習①（clean）と同じ手順を、\textbf{outlierデータ}でもう一度やります。\\
+ここで見たいのは、\textbf{二乗（$e^2$）が外れ値に強く反応する}という性質です。
+
+\vspace{-0.6em}
+\begin{tcolorbox}[title=今日の観察ポイント（ここだけ）]
+外れ値があると、\textbf{1点の大きなズレ}が $e^2$ で\textbf{何倍にも大きく}なり、\\
+\textbf{SSEを強く支配する} → 回帰直線が\textbf{外れ値に引っ張られる}
+\end{tcolorbox}
+
+\vspace{0.2em}
+\textbf{やること（実習①と同型）}
+\vspace{-0.4em}
+\begin{enumerate}
+  \item outlier版で散布図 → トレンドライン → 式（$a,b$）を表示
+  \item $\hat{y}$列 → 残差 $e$列 → 残差$^2$列 → SSE を作る
+  \item clean版と比べて、\textbf{どこが大きく変わったか}を見る
+\end{enumerate}
+
+\vspace{-0.4em}
+\textbf{見るポイント（比較）}
+\vspace{-0.6em}
+\begin{itemize}
+  \item $a$（傾き）や $b$（切片）はどれくらい変わった？
+  \item $R^2$ は上がった？下がった？
+  \item 残差$^2$列で、\textbf{異常に大きい行}はどれ？
+\end{itemize}
+
+
+\noteT{G-19：実習②の運用（疲れさせない）}{
+【目的】「二乗＝外れ値に弱い」を体験で理解させ、現実データの扱いへつなぐ。\\
+【口頭補足】外れ値1点の$e^2$が大きすぎて、他の点を押しのけてSSEを支配することがある。\\
+【実習仕様】(1)outlierで実習①と同じ列作成→(2)残差$^2$が最大の行を特定→(3)メモ列で理由づけ。\\
+【運用】時間が厳しければ「SSE最大の行を探す」だけでもOK（全列を作らせなくてもよい）。}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% H-20: まとめ＋次回への橋
+%----------------------------------------------------------------------------------------
+\begin{frame}{まとめ：回帰直線は「SSE最小」で決まる／今後は“読み取りと応用”へ}
+\small
+
+今日のゴールは、回帰直線の裏側にあるルールを、\\
+\textbf{式ではなく“列（手順）”で理解すること}でした。
+
+\vspace{0.6em}
+\begin{itemize}
+  \item \textbf{残差}：$e=y-\hat{y}$（実測と予測のズレ）
+  \item \textbf{SSE}：$\sum e^2$（ズレの二乗の合計）
+  \item \textbf{回帰直線}：\textbf{SSEが最小}になる直線（最小二乗法）
+  \item \textbf{二乗の性質}：大きいズレを強く重視 → 外れ値に引っ張られやすい
+\end{itemize}
+
+\vspace{0.6em}
+\begin{tcolorbox}[title=今後への橋]
+今後は、回帰の結果を\textbf{読む・使う}練習を増やします。\\
+\textbf{（例）} 予測値の解釈／残差からの気づき／外れ値の扱い（データの意味づけ）
+\end{tcolorbox}
+
+\vspace{0.3em}
+\emjpin \textbf{同じ姿勢：} データ → 要約（線） → ズレ（残差） → 解釈（理由）
+
+\noteT{H-20：締めと今後接続（運用）}{
+【目的】今日のキーワードを“3点セット”で固定し、次回の「読み取り・応用」に自然につなぐ。\\
+【口頭補足】回帰は「線を引いて終わり」ではなく、残差と外れ値から“何が起きたか”を考える道具。\\
+【実習仕様】提出なし。最後に全員で「外れ値はなぜ危ない？」を一言で言わせて終了。\\
+【運用】次回の冒頭で、clean/outlierの違いを1枚で再確認すると接続が良い。}
+\end{frame}
+\end{document}

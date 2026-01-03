@@ -50,9 +50,33 @@
 
 % （必要なときだけ）tcolorbox
 \usepackage[most]{tcolorbox}
+\tcbuselibrary{skins}        % 高度なデザイン機能
 
 % hyperref は最後
 \usepackage{hyperref}
+
+% --- 1. カラーパレットの定義 ---
+\definecolor{CanvaGreen}{HTML}{2E7D32} % メインの濃い緑（タイトル・枠線）
+\definecolor{PaleGreen}{HTML}{F1F8E9}  % 背景の薄い緑
+\definecolor{MyDarkGreen}{HTML}{587a7f}
+\definecolor{DeepText}{HTML}{1C1C1C}   % 本文の文字色
+
+% --- 2. tcolorbox のデフォルト設定（全ボックスに適用） ---
+\tcbset{
+    enhanced,                          % 高度な装飾を有効化
+    colback=white,                 % 本文背景色
+    colframe=MyDarkGreen,               % 枠線の色
+    coltitle=white,                    % タイトル文字色
+    fonttitle=\bfseries\sffamily,      % タイトルを太字・ゴシック
+    boxrule=1pt,                       % 枠線の太さ
+    arc=2mm,                           % 角の丸み
+    left=3mm, right=3mm,               % 左右の余白
+    top=0.5mm, bottom=0.5mm,               % 本文の上下余白
+    toptitle=0.8mm, bottomtitle=0.5mm, % タイトル内の上下余白
+    before skip=0.8em, after skip=0.2em,   % ボックス前後の行間
+    shadow={0mm}{0mm}{0mm}{black!0}    % 影を完全に消してフラットに
+}
+
 
 %--------------------------
 % パス
@@ -273,11 +297,17 @@
 \begin{frame}{回帰で「将来予測」を作る（判断ではなく予測）}
 \small
 
-\begin{block}{今日やること（結論）}
-ハンバーガーショップのデータを使って、\\
-\textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
-\textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
-\end{block}
+% タイトル付きの標準ボックス
+    \begin{tcolorbox}[title=今日やること（結論）]
+        ハンバーガーショップのデータを使って、\\
+        \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
+        \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
+    \end{tcolorbox}
+% \begin{block}{今日やること（結論）}
+% ハンバーガーショップのデータを使って、\\
+% \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
+% \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
+% \end{block}
 
 \vspace{0.6em}
 \begin{itemize}
@@ -287,13 +317,19 @@
 \end{itemize}
 
 \vspace{0.6em}
-\begin{block}{今日の到達目標}
-\begin{itemize}
-  \item 散布図から「増える／減る／関係なし」を説明できる
-  \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
-  \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
-\end{itemize}
-\end{block}
+    \textbf{今日の到達目標}
+      \begin{itemize}
+        \item 散布図から「増える／減る／関係なし」を説明できる
+        \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
+        \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
+      \end{itemize}
+% \begin{block}{今日の到達目標}
+% \begin{itemize}
+%   \item 散布図から「増える／減る／関係なし」を説明できる
+%   \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
+%   \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
+% \end{itemize}
+% \end{block}
 
 \noteT{Slide01：第11回の立ち位置（運用）}{
 【目的】検定（判断）から回帰（予測）へ、目的が変わることを先に固定する。\\
@@ -313,10 +349,10 @@
 （「本当に減ったと言ってよいか？」を\textbf{判断}できるようになった）
 
 \vspace{0.6em}
-\begin{block}{次の目標（現場の目標）}
+\begin{tcolorbox}[title=次の目標（現場の目標）]
 ポテトは\textbf{利益率が高い}。\\
 だから店長は \textbf{ポテトの売上を伸ばす}ことを目標にしました。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 \textbf{そこで店長は考えます：}
@@ -345,18 +381,18 @@
 \textbf{「平均との差がある」}だけではなく、\textbf{ばらつきの中で珍しいか}で決めました。
 
 \vspace{0.6em}
-\begin{block}{検定（前回）＝判断}
+\begin{tcolorbox}[title=検定（前回）＝判断]
 \textbf{珍しさ（p値）}を使って、\\
 「\textbf{偶然と言ってよいか／言いにくいか}」を決める。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 一方、今日は次の目的です。
 
-\begin{block}{回帰（今日）＝予測}
+\begin{tcolorbox}[title=回帰（今日）＝予測]
 2つの数値の\textbf{関係}を使って、\\
 「\textbf{もし $x$ がこうなら、$y$ はこのくらい}」を予測する。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \begin{itemize}
@@ -1150,6 +1186,59 @@ Excelは勝手に線を引いているように見えるが、\\
         \item タイトル：1A237E / FFFFFF
         \item 本文背景：FFFDE7 / 本文文字：212121
     \end{itemize}
+
+\end{frame}
+
+\begin{frame}{枠線付きブロックのテスト}
+    % グリーンベースの配色定義
+    \definecolor{MyDarkGreen}{HTML}{2E7D32}  % タイトル背景
+    \definecolor{MyLightGreen}{HTML}{E8F5E9} % 本文背景
+    \definecolor{MyDarkGreen}{HTML}{587a7f}
+
+    \begin{tcolorbox}[
+%        colback=MyLightGreen,    % 本文の背景色
+        colback=white,    % 本文の背景色
+        colframe=MyDarkGreen,    % 枠線の色
+        colbacktitle=MyDarkGreen, % タイトルの背景色
+        coltitle=white,          % タイトルの文字色
+        fonttitle=\bfseries,     % タイトルを太字に
+        title={正規分布の定義},    % タイトルテキスト
+        sharp corners=south,     % 下側の角だけ尖らせる（Canva風アレンジ）
+        boxrule=1pt              % 枠線の太さ
+    ]
+        ここが本文エリアです。外側にタイトルと同じ色の枠線が入ることで、
+        内容が引き締まって見えます。
+    \end{tcolorbox}
+\end{frame}
+
+\begin{frame}{tcolorboxで作るCanva風デザイン}
+
+    % --- 色の定義（落ち着いたグリーンベース） ---
+    \definecolor{CanvaGreen}{HTML}{2E7D32} % タイトル＆枠線の色
+    \definecolor{PaleGreen}{HTML}{F1F8E9}  % 本文の背景色
+
+    \begin{tcolorbox}[
+        enhanced,                          % 高度な設定を有効化
+        title={実習の重要ポイント},            % タイトル文字列
+        colback=PaleGreen,                 % 本文の背景
+        colframe=CanvaGreen,               % 枠線の色（タイトル背景と同じ）
+        coltitle=white,                    % タイトル文字の色
+        fonttitle=\bfseries\sffamily,      % タイトルを太字・ゴシック体に
+        sharp corners=northwest,           % 左上の角だけ尖らせる（Canva風の遊び心）
+        arc=3mm,                           % 角の丸み
+        boxrule=1.5pt,                     % 枠線の太さ
+        left=4mm, right=4mm, top=3mm,      % 内側の余白調整
+        toptitle=2mm, bottomtitle=2mm      % タイトル内の余白
+    ]
+        本文のエリアに枠線を入れることで、情報の「まとまり」が強調されます。
+        TikZで描いたグラフなどをこの中に入れることも可能です。
+        
+        \begin{itemize}
+            \item 色の統一感（タイトル背景 ＝ 枠線）
+            \item 適度な余白（Padding）
+            \item フラットな質感（影なし）
+        \end{itemize}
+    \end{tcolorbox}
 
 \end{frame}
 \end{document}

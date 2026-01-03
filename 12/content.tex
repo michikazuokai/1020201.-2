@@ -9,11 +9,17 @@
 \begin{frame}{回帰で「将来予測」を作る（判断ではなく予測）}
 \small
 
-\begin{block}{今日やること（結論）}
-ハンバーガーショップのデータを使って、\\
-\textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
-\textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
-\end{block}
+% タイトル付きの標準ボックス
+    \begin{tcolorbox}[title=今日やること（結論）]
+        ハンバーガーショップのデータを使って、\\
+        \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
+        \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
+    \end{tcolorbox}
+% \begin{block}{今日やること（結論）}
+% ハンバーガーショップのデータを使って、\\
+% \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
+% \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
+% \end{block}
 
 \vspace{0.6em}
 \begin{itemize}
@@ -23,13 +29,19 @@
 \end{itemize}
 
 \vspace{0.6em}
-\begin{block}{今日の到達目標}
-\begin{itemize}
-  \item 散布図から「増える／減る／関係なし」を説明できる
-  \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
-  \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
-\end{itemize}
-\end{block}
+    \textbf{今日の到達目標}
+      \begin{itemize}
+        \item 散布図から「増える／減る／関係なし」を説明できる
+        \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
+        \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
+      \end{itemize}
+% \begin{block}{今日の到達目標}
+% \begin{itemize}
+%   \item 散布図から「増える／減る／関係なし」を説明できる
+%   \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
+%   \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
+% \end{itemize}
+% \end{block}
 
 \noteT{Slide01：第11回の立ち位置（運用）}{
 【目的】検定（判断）から回帰（予測）へ、目的が変わることを先に固定する。\\
@@ -49,10 +61,10 @@
 （「本当に減ったと言ってよいか？」を\textbf{判断}できるようになった）
 
 \vspace{0.6em}
-\begin{block}{次の目標（現場の目標）}
+\begin{tcolorbox}[title=次の目標（現場の目標）]
 ポテトは\textbf{利益率が高い}。\\
 だから店長は \textbf{ポテトの売上を伸ばす}ことを目標にしました。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 \textbf{そこで店長は考えます：}
@@ -81,18 +93,18 @@
 \textbf{「平均との差がある」}だけではなく、\textbf{ばらつきの中で珍しいか}で決めました。
 
 \vspace{0.6em}
-\begin{block}{検定（前回）＝判断}
+\begin{tcolorbox}[title=検定（前回）＝判断]
 \textbf{珍しさ（p値）}を使って、\\
 「\textbf{偶然と言ってよいか／言いにくいか}」を決める。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 一方、今日は次の目的です。
 
-\begin{block}{回帰（今日）＝予測}
+\begin{tcolorbox}[title=回帰（今日）＝予測]
 2つの数値の\textbf{関係}を使って、\\
 「\textbf{もし $x$ がこうなら、$y$ はこのくらい}」を予測する。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \begin{itemize}
@@ -802,89 +814,4 @@ Excelは勝手に線を引いているように見えるが、\\
 【口頭補足】残差＝点から線までの縦の距離（まずはこの直感でOK）。なぜ二乗？は次回に回す。\\
 【実習仕様】最後に口頭確認：①回帰は何を作る？→「予測モデル」②ズレの名前は？→「残差」。\\
 【運用】次回の導入に使える一言問い：「線はどうやって決めたの？」→「ズレを最小にする（最小二乗法）」。}
-\end{frame}
-
-\begin{frame}{カラーパターンのテスト（このページ限定）}
-
-    % --- このスライドの中だけで色を上書きする ---
-    \definecolor{MyNavy}{HTML}{1A237E}
-    \definecolor{MyCream}{HTML}{FFFDE7}
-    \definecolor{MyText}{HTML}{1C1C1C}
-
-    \setbeamercolor{block title}{bg=MyNavy, fg=white}
-    \setbeamercolor{block body}{bg=MyCream, fg=MyText}
-    % ------------------------------------------
-
-    \begin{block}{統計学的な判定のポイント}
-        $t$値が境界線を超えているかを確認します。
-        \begin{itemize}
-            \item \textbf{有意差あり}：偶然では説明できない差がある。
-            \item \textbf{有意差なし}：ただの誤差（偶然）の可能性がある。
-        \end{itemize}
-    \end{block}
-
-    \vspace{1em}
-    \centering
-    {\small \color{MyNavy} ※この色の組み合わせは、視認性と高級感を両立します。}
-
-\end{frame}
-
-\begin{frame}{王道カラーパターンの実機テスト6}
-
-    % 1. 指定されたカラーコードを正確に定義
-    \definecolor{TargetTitleBg}{HTML}{2E7D32} % 濃いネイビー
-    \definecolor{TargetTitleFg}{HTML}{FFFFFF} % 白
-    \definecolor{TargetBodyBg}{HTML}{E8F5E9}  % 薄いクリーム
-    \definecolor{TargetBodyFg}{HTML}{1B5E20}  % 濃いグレー
-
-    % 2. このスライドのブロックにのみ適用
-    \setbeamercolor{block title}{bg=TargetTitleBg, fg=TargetTitleFg}
-    \setbeamercolor{block body}{bg=TargetBodyBg, fg=TargetBodyFg}
-
-    % 3. コンテンツの配置
-    \begin{block}{統計的仮説検定の結論}
-        実習で得られた平均値の差を評価します。
-        \begin{itemize}
-            \item \textbf{帰無仮説}：ポテトの重さに差はない
-            \item \textbf{対立仮説}：ポテトの重さに有意な差がある
-        \end{itemize}
-        計算された$t$値が境界線を越えた場合、対立仮説を採択します。
-    \end{block}
-
-    \vspace{1cm}
-    \begin{itemize}
-        \item タイトル：1A237E / FFFFFF
-        \item 本文背景：FFFDE7 / 本文文字：212121
-    \end{itemize}
-
-\end{frame}
-
-\begin{frame}{王道カラーパターンの実機テスト}
-
-    % 1. 指定されたカラーコードを正確に定義
-    \definecolor{TargetTitleBg}{HTML}{5D4037} % （ダークブラウン）
-    \definecolor{TargetTitleFg}{HTML}{FFFFFF} % 白
-    \definecolor{TargetBodyBg}{HTML}{F5F5DC}  % （ベージュ）
-    \definecolor{TargetBodyFg}{HTML}{3E2723}  % （濃い茶色の黒）
-
-    % 2. このスライドのブロックにのみ適用
-    \setbeamercolor{block title}{bg=TargetTitleBg, fg=TargetTitleFg}
-    \setbeamercolor{block body}{bg=TargetBodyBg, fg=TargetBodyFg}
-
-    % 3. コンテンツの配置
-    \begin{block}{統計的仮説検定の結論}
-        実習で得られた平均値の差を評価します。
-        \begin{itemize}
-            \item \textbf{帰無仮説}：ポテトの重さに差はない
-            \item \textbf{対立仮説}：ポテトの重さに有意な差がある
-        \end{itemize}
-        計算された$t$値が境界線を越えた場合、対立仮説を採択します。
-    \end{block}
-
-    \vspace{1cm}
-    \begin{itemize}
-        \item タイトル：1A237E / FFFFFF
-        \item 本文背景：FFFDE7 / 本文文字：212121
-    \end{itemize}
-
 \end{frame}

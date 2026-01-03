@@ -15,11 +15,11 @@
         \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
         \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
     \end{tcolorbox}
-% \begin{block}{今日やること（結論）}
+% \begin{tcolorbox}[title=今日やること（結論）]
 % ハンバーガーショップのデータを使って、\\
 % \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
 % \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
-% \end{block}
+% \end{tcolorbox}
 
 \vspace{0.6em}
 \begin{itemize}
@@ -35,13 +35,13 @@
         \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
         \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
       \end{itemize}
-% \begin{block}{今日の到達目標}
+% \begin{tcolorbox}[title=今日の到達目標]
 % \begin{itemize}
 %   \item 散布図から「増える／減る／関係なし」を説明できる
 %   \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
 %   \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
 % \end{itemize}
-% \end{block}
+% \end{tcolorbox}
 
 \noteT{Slide01：第11回の立ち位置（運用）}{
 【目的】検定（判断）から回帰（予測）へ、目的が変わることを先に固定する。\\
@@ -129,9 +129,9 @@
 そこで、\textbf{ポテトの注文数}に関係しそうなものを考えます。
 
 \vspace{0.6em}
-\begin{block}{今日の問い（回帰の問い）}
+\begin{tcolorbox}[title=今日の問い（回帰の問い）]
 \textbf{ハンバーガー注文数が増える日ほど、ポテト注文数も増えるのか？}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 回帰では、2つの数値の役割を\textbf{先に決めます}。
@@ -161,10 +161,10 @@
 回帰を始める前に、まず\textbf{散布図}で関係を\textbf{目で見ます}。
 
 \vspace{0.6em}
-\begin{block}{散布図（定義）}
+\begin{tcolorbox}[title=散布図（定義）]
 \textbf{1つのデータ（1日）を1つの点}として、\\
 横軸に $x$、縦軸に $y$ をとって並べた図。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 今回の例では、点の意味はこうです。
@@ -281,10 +281,10 @@
 同じ $x$ でも $y$ が少し違うのが普通です。
 
 \vspace{0.6em}
-\begin{block}{重要：データには「ばらつき」がある}
+\begin{tcolorbox}[title=重要：データには「ばらつき」がある]
 \textbf{ばらつき}があるから、予測は\textbf{100\%当たる}わけではない。\\
 でも、\textbf{中心の傾向}をつかめば、だいたいの予測はできる。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 さらに、\textbf{外れ値}が混ざることもあります。
@@ -315,10 +315,10 @@
 このままだと、「次はどれくらい？」が言いにくい。
 
 \vspace{0.6em}
-\begin{block}{回帰の目的（理由）}
+\begin{tcolorbox}[title=回帰の目的（理由）]
 点の雲を\textbf{一本の線}で要約して、\\
 \textbf{予測に使える形}（式）にする。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 回帰でやりたいことは、次の2つです。
@@ -353,10 +353,10 @@
   % 左：言葉
   %-------------------------------
   \begin{column}{0.54\linewidth}
-  \begin{block}{回帰直線（イメージ）}
+  \begin{tcolorbox}[title=回帰直線（イメージ）]
 \textbf{同じ$x$のときの$y$の“中心”}を結んだような線。\\
 この線上の値が、$y$の\textbf{予測値}（$\hat{y}$）。
-  \end{block}
+  \end{tcolorbox}
 
   \vspace{0.4em}
   \begin{itemize}
@@ -425,10 +425,10 @@
 \end{center}
 
 \vspace{0.4em}
-\begin{block}{この式が言っていること（文章）}
+\begin{tcolorbox}[title=この式が言っていること（文章）]
 \textbf{$x$（ハンバーガー注文数）が分かれば、}\\
 \textbf{ポテト注文数の予測値 $\hat{y}$ を計算できる。}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
 \begin{itemize}
@@ -455,17 +455,17 @@
 回帰式 $\hat{y}=ax+b$ の\textbf{意味}は、$a$ と $b$ を見れば説明できます。
 
 \vspace{0.6em}
-\begin{block}{傾き $a$（いちばん大事）}
+\begin{tcolorbox}[title=傾き $a$（いちばん大事）]
 \textbf{$x$が1増えると、$\hat{y}$が平均でどれくらい増えるか}。\\
 例：$a=0.6$ なら、バーガーが10増えるとポテトは\textbf{約6増える}。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
-\begin{block}{切片 $b$（注意して使う）}
+\begin{tcolorbox}[title=切片 $b$（注意して使う）]
 \textbf{$x=0$ のときの予測値}。\\
 ただし、現実に $x=0$（バーガー0）が\textbf{起きない範囲}なら、\\
 $b$の現実的な意味は\textbf{薄い}ことがある。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \emjpin 実習では、まず\textbf{$a$（増え方）を言葉で説明できる}ことを優先する。
@@ -487,10 +487,10 @@ $b$の現実的な意味は\textbf{薄い}ことがある。
 「この線は、どれくらい\textbf{データに合っている}の？」
 
 \vspace{0.6em}
-\begin{block}{R\textsuperscript{2}（決定係数）}
+\begin{tcolorbox}[title=R\textsuperscript{2}（決定係数）]
 回帰直線で、$y$のばらつきのうち\\
 \textbf{どれくらいが$x$で説明できたか}を表す\textbf{目安}。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
 \begin{itemize}
@@ -500,10 +500,10 @@ $b$の現実的な意味は\textbf{薄い}ことがある。
 \end{itemize}
 
 \vspace{0.6em}
-\begin{block}{ここが重要（誤解防止）}
+\begin{tcolorbox}[title=ここが重要（誤解防止）]
 R\textsuperscript{2} は \textbf{正解率ではない}。\\
 「未来が必ず当たる」ことは保証しない。
-\end{block}
+\end{tcolorbox}
 
 \noteT{Slide12：R\textsuperscript{2}の言い方を固定する（留学生対応）}{
 【目的】R\textsuperscript{2}を「当てた回数」や「正解率」と誤解させない。意味を1文で固定する。\\
@@ -522,10 +522,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 「バーガーが増えた\textbf{から}、ポテトが増えた！」
 
 \vspace{0.6em}
-\begin{block}{でも注意}
+\begin{tcolorbox}[title=でも注意]
 散布図や回帰で分かるのは、基本的に\textbf{関係（相関）}であって、\\
 \textbf{原因（因果）}を確定することではない。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
 \textbf{例：} バーガーとポテトが同時に増える本当の理由は、別にあるかもしれません。
@@ -536,10 +536,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \end{itemize}
 
 \vspace{-0.6em}
-\begin{block}{今日の結論の形}
+\begin{tcolorbox}[title=今日の結論の形]
 回帰で言えるのは、\\
 \textbf{「この範囲では、増える傾向がある／予測に使えるかもしれない」}まで。
-\end{block}
+\end{tcolorbox}
 
 \noteT{Slide13：相関と因果の線引き（やりすぎない）}{
 【目的】回帰＝因果の証明、と誤解させない。特に留学生は断定表現に引っ張られやすい。\\
@@ -558,10 +558,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \textbf{順番が大事}です（まず成功→次に現実）。
 
 \vspace{0.6em}
-\begin{block}{データA：clean（外れ値なし）}
+\begin{tcolorbox}[title=データA：clean（外れ値なし）]
 \textbf{回帰の基本を「成功」させるためのデータ}。\\
 散布図が読みやすく、回帰直線がきれいに出る。
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.4em}
 \begin{itemize}
@@ -570,10 +570,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \end{itemize}
 
 \vspace{-0.8em}
-\begin{block}{データB：outlier（外れ値あり）}
+\begin{tcolorbox}[title=データB：outlier（外れ値あり）]
 \textbf{現実のデータはズレる}ことを体験するためのデータ。\\
 品切れ／キャンペーンなどで点が極端に外れる日が混ざる。
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.4em}
 \begin{itemize}
@@ -598,7 +598,7 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 最後に、外れ値で\textbf{現実のズレ}も確認します。
 
 \vspace{0.6em}
-\begin{block}{実習の流れ（この順番で固定）}
+\begin{tcolorbox}[title=実習の流れ（この順番で固定）]
 \begin{enumerate}
   \item \textbf{散布図}を作る（$x$と$y$の関係を点で見る）
   \item \textbf{回帰直線}を引く（点の雲を一本の線で要約）
@@ -607,7 +607,7 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
   \item 具体的な$x$を入れて \textbf{予測}する（$\hat{y}$を計算）
   \item （後半）outlierで \textbf{ズレの原因}を考える（メモ列と結びつける）
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \emjpin 「傾き$a$は何を意味する？」／「ズレた日はなぜ？」
@@ -632,22 +632,22 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \textbf{目的：} 回帰はまず\textbf{散布図}から始める。点の並びで「関係の方向」を読む。
 
 \vspace{0.6em}
-\begin{block}{やること（操作）}
+\begin{tcolorbox}[title=やること（操作）]
 \begin{enumerate}
   \item \textbf{clean} シートを開く（外れ値なし）
   \item $x$（横軸）に \textbf{バーガー注文数}、$y$（縦軸）に \textbf{ポテト注文数} を選択
   \item \textbf{散布図（点）} を作る
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
-\begin{block}{必ずやる（見た目のルール）}
+\begin{tcolorbox}[title=必ずやる（見た目のルール）]
 \begin{itemize}
   \item グラフタイトル：\textbf{「バーガー数とポテト数（clean）」}
   \item 横軸ラベル：\textbf{バーガー注文数（件）}
   \item 縦軸ラベル：\textbf{ポテト注文数（件）}
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \emjpin まずは\textbf{右上がり／右下がり／関係なし}のどれに近いかを言えるようにする。
@@ -668,22 +668,22 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \textbf{目的：} 点の雲を\textbf{一本の線}で要約し、\textbf{式}と\textbf{R\textsuperscript{2}}を表示する。
 
 \vspace{0.6em}
-\begin{block}{やること（操作）}
+\begin{tcolorbox}[title=やること（操作）]
 \begin{enumerate}
   \item 散布図上の点をクリック
   \item \textbf{近似曲線（トレンドライン）}を追加（\textbf{線形}を選ぶ）
   \item 「\textbf{グラフに数式を表示する}」をON
   \item 「\textbf{グラフにR\textsuperscript{2}値を表示する}」をON
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
-\begin{block}{表示場所の指示（読みやすくする）}
+\begin{tcolorbox}[title=表示場所の指示（読みやすくする）]
 \begin{itemize}
   \item 式とR\textsuperscript{2}は、点に重ならない場所へ\textbf{ドラッグして移動}
   \item 点が見えにくい場合は、グラフを少し拡大してOK
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \emjpin ここで得るものは2つ：\textbf{回帰式}（予測ルール）と \textbf{R\textsuperscript{2}}（当てはまりの目安）。
@@ -705,10 +705,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 （計算よりも\textbf{意味を言葉で説明}できることがゴール）
 
 \vspace{0.6em}
-\begin{block}{Step1：傾き$a$を言葉で説明する}
+\begin{tcolorbox}[title=Step1：傾き$a$を言葉で説明する]
 回帰式 $\hat{y}=ax+b$ の \textbf{$a$} は、\\
 \textbf{バーガーが1増えたとき、ポテトが平均でどれくらい増えるか}。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \begin{itemize}
@@ -716,10 +716,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \end{itemize}
 
 \vspace{0.7em}
-\begin{block}{Step2：指定$x$で予測値$\hat{y}$を計算する}
+\begin{tcolorbox}[title=Step2：指定$x$で予測値$\hat{y}$を計算する]
 教師が指定する $x$（例：$x=150$）を式に代入し、$\hat{y}$を計算する。\\
 \textbf{線の上の値}＝予測値（ハット付き）。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \emjpin 口頭チェック：\textbf{$y$は実測、$\hat{y}$は予測}（同じではない）。
@@ -745,29 +745,31 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 外れ値が入ると、回帰直線・式・R\textsuperscript{2}・予測が\textbf{どう変わるか}を体験する。
 
 \vspace{0.6em}
-\begin{block}{やること（操作は実習①と同じ）}
+\begin{tcolorbox}[title=やること（操作は実習①と同じ）]
+%\begin{tcolorbox}[title={やること 操作は実習1と同じ}]
 \begin{enumerate}
   \item \textbf{outlier} シートを開く
   \item 散布図を作る（軸ラベルも同じ）
-  \item 線形の回帰直線を追加し、\textbf{式とR\textsuperscript{2}}を表示する
+%  \item 線形の回帰直線を追加し、\textbf{式とR\textsuperscript{2}}を表示する
+  \item 線形の回帰直線を追加し、式とR\textsuperscript{2}を表示する
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
-\begin{block}{比較するポイント（ここが学び）}
+\begin{tcolorbox}[title=比較するポイント（ここが学び）]
 \begin{itemize}
   \item \textbf{線の向き・位置}は変わったか？
   \item \textbf{傾き$a$}はどれくらい変わったか？
   \item \textbf{R\textsuperscript{2}}は上がった？下がった？
   \item 同じ$x$（例：$x=150$）で\textbf{$\hat{y}$はどれくらい変わる}？
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
-\begin{block}{理由づけ：メモ列で説明する}
+\begin{tcolorbox}[title=理由づけ：メモ列で説明する]
 外れている点を見つけたら、\textbf{メモ}を見て理由を言葉にする。\\
 例：\textbf{品切れ}（本当は売れるのに売れない）／\textbf{キャンペーン}（急に増える）
-\end{block}
+\end{tcolorbox}
 
 \noteT{Slide19：外れ値を“発見→説明”させる運用}{
 【目的】外れ値の影響（線・式・R\textsuperscript{2}・予測のズレ）を、計算ではなく比較で理解させる。\\
@@ -782,19 +784,19 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \begin{frame}{まとめ}
 \small
 
-\begin{block}{今日の到達点（ここだけ）}
+\begin{tcolorbox}[title=今日の到達点（ここだけ）]
 \begin{itemize}
   \item 散布図で「関係」を見て、回帰直線で\textbf{一本の線}に要約した
   \item 回帰式 $\hat{y}=ax+b$ を使って、\textbf{予測}を計算できるようになった
   \item R\textsuperscript{2}は「当てはまりの目安」で、\textbf{正解率ではない}と分かった
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.6em}
-\begin{block}{現実のポイント：ズレ（残差）が必ずある}
+\begin{tcolorbox}[title=現実のポイント：ズレ（残差）が必ずある]
 実測 $y$ と予測 $\hat{y}$ は一致しないことが多い。\\
 この\textbf{ズレ}を \textbf{残差}（誤差）と呼ぶ。
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -803,11 +805,11 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \end{itemize}
 
 \vspace{-0.6em}
-\begin{block}{次回への橋：では、線はどうやって決めている？}
+\begin{tcolorbox}[title=次回への橋：では、線はどうやって決めている？]
 Excelは勝手に線を引いているように見えるが、\\
 実は「ズレ（残差）を小さくする」ルールで線を決めている。\\
 次回はその決め方＝\textbf{最小二乗法}を学ぶ。
-\end{block}
+\end{tcolorbox}
 
 \noteT{Slide20：次回（最小二乗法）への接続を自然にする}{
 【目的】回帰の“結果”から“決め方”へ関心を移す。最小二乗法は「ズレを小さくするルール」として導入。\\

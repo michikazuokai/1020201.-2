@@ -1,7 +1,7 @@
 %----------------------------------------------------------------------------------------
 %  metropolis template (refactored)
 %----------------------------------------------------------------------------------------
-\documentclass[aspectratio=169]{beamer}
+\documentclass[handout,aspectratio=169]{beamer}
 
 % \documentclass の直後で hyperref のオプションを渡す（metropolisでも安全）
 \PassOptionsToPackage{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue}{hyperref}
@@ -10,7 +10,7 @@
 \metroset{block=fill, sectionpage=progressbar, progressbar=foot}
 
 % 背景色（tech のとき白など）: Pythonで差し込み
-
+\setbeamercolor{background canvas}{bg=white}
 
 %--------------------------
 % 日本語
@@ -211,11 +211,39 @@
 % 切替（Pythonから差し込み）
 %--------------------------
 \mypausemodetrue
-\teachermodefalse
-
+\teachermodetrue
+\setbeameroption{show notes}
 %-------------
 
-\providecommand{\noteT}[2]{} % noteT を無視
+% --- tech のときだけ noteT を有効化（テンプレートの \providecommand を上書き） ---
+\makeatletter
+\renewcommand{\noteT}[2]{%
+ \gdef\notetitletext{#1}%
+ \note{#2}%
+}
+% タイトル未指定のときのために初期化
+\renewcommand{\notetitletext}{}%
+
+\setbeamertemplate{note page}{%
+ \begin{minipage}{\linewidth}
+ \vspace{1.2ex} % タイトルを少し下げる（必要に応じて調整）
+ {\Large\bfseries
+ \ifx\notetitletext\@empty
+ \insertframetitle
+ \else
+ \notetitletext
+ \fi
+ }\par
+ \vspace{-1.2ex}
+ \rule{\linewidth}{0.8pt}\par
+ \vspace{0.8ex}
+ {\scriptsize \insertnote}
+ \end{minipage}
+}
+\makeatother
+
+%教師用のPDFは奇数ページからスライドを出力
+\oddslideenforcetrue
 
 
 %--------------------------
@@ -321,7 +349,7 @@
 \noteT{A-1：第12回の立ち位置（運用）}{
 【目的】「今日は何を理解する回か」を最初に固定する（最小二乗法＝線の決め方）。\\
 【口頭補足】第11回は「使う（予測する）」回。第12回は「作り方（決め方）」の回。\\
-【実習仕様】cleanデータで、\hat{y}→残差→残差の二乗→SSE（合計）をExcelで作る（提出なし）。\\
+【実習仕様】cleanデータで、$\hat{y}$→残差→残差の二乗→SSE（合計）をExcelで作る（提出なし）。\\
 【運用】冒頭で確認：回帰は“判断”ではなく“予測”。（検定と混同させない）}
 \end{frame}
 

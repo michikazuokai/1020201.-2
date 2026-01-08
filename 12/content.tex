@@ -14,7 +14,7 @@
 \begin{frame}{回帰で「将来予測」を作る（判断ではなく予測）}
 \small
 
-\textbf{今日やること（結論）}
+\textbf{今日やること}\\
     ハンバーガーショップのデータを使って、\\
     \textbf{「ポテトの注文数を増やすには、何が関係していそうか」}を見つけ、\\
     \textbf{「このくらい売れそう」}という\textbf{予測}を作ります。
@@ -33,13 +33,7 @@
         \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
         \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
       \end{itemize}
-% \begin{tcolorbox}[title=今日の到達目標]
-% \begin{itemize}
-%   \item 散布図から「増える／減る／関係なし」を説明できる
-%   \item 回帰直線と式を表示し、\textbf{傾き $a$ の意味}を言える
-%   \item 回帰式で「もし $x$ がこうなら、$y$ はこのくらい」を\textbf{予測}できる
-% \end{itemize}
-% \end{tcolorbox}
+
 
 \noteT{Slide01：第11回の立ち位置（運用）}{
 【目的】検定（判断）から回帰（予測）へ、目的が変わることを先に固定する。\\
@@ -48,10 +42,6 @@
 後半は outlier データ（外れ値あり）で「現実はズレる」を確認：メモ（品切れ／キャンペーン）と結びつける。\\
 【運用】開始直後に一言確認：「今日は“判断”と“予測”のどっち？」→「予測」。}
 \end{frame}
-
-%----------------------------------------------------------------------------------------
-% Slide 02: ストーリー（店長の次の目標）
-%----------------------------------------------------------------------------------------
 
 %@@PAGEBAND@@
 % ----------------------------------------------------------------------------------------
@@ -64,10 +54,11 @@
 （「本当に減ったと言ってよいか？」を\textbf{判断}できるようになった）
 
 \vspace{0.6em}
-\begin{tcolorbox}[title=次の目標（現場の目標）]
-ポテトは\textbf{利益率が高い}。\\
-だから店長は \textbf{ポテトの売上を伸ばす}ことを目標にしました。
-\end{tcolorbox}
+\textbf{次の目標（現場の目標）}
+\begin{itemize}
+  \item ポテトは\textbf{利益率が高い}。
+  \item だから店長は \textbf{ポテトの売上を伸ばす}ことを目標にしました。
+\end{itemize}
 
 \vspace{0.6em}
 \textbf{そこで店長は考えます：}
@@ -86,15 +77,11 @@
 【運用】学生に短く発言させる：「ポテトを増やすには何が大事？」→「客数／セット注文」など。}
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-% Slide 03: 前回回収（混同防止）
-%----------------------------------------------------------------------------------------
-
 %@@PAGEBAND@@
 % ----------------------------------------------------------------------------------------
 %   page 03
 % ----------------------------------------------------------------------------------------
-\begin{frame}{前回回収：検定は「判断」／回帰は「予測」（混同しない）}
+\begin{frame}{前回の検定は「判断」／今回の回帰は「予測」}
 \small
 
 前回までやってきたのは、次のような\textbf{判断}です。\\
@@ -200,10 +187,6 @@
 【実習仕様】まず散布図だけ作らせる（近似直線は次段階）。軸ラベルと単位も入れる。\\
 【運用】ここで小確認：「1点は何？」→「1日のデータ」。}
 \end{frame}
-
-%----------------------------------------------------------------------------------------
-% Slide 06: 散布図の読み方①（3パターン模式図）
-%----------------------------------------------------------------------------------------
 
 %@@PAGEBAND@@
 % ----------------------------------------------------------------------------------------
@@ -411,28 +394,34 @@
   %-------------------------------
   \begin{column}{0.42\linewidth}
   \centering
-  \begin{tikzpicture}[x=1.1cm,y=1.0cm]
-    % axes
-    \draw[->] (0,0) -- (3.0,0);
-    \draw[->] (0,0) -- (0,2.6);
-    \node[below] at (1.5,0) {\scriptsize $x$（ハンバーガー）};
-    \node[left]  at (0,1.3) {\scriptsize $y$（ポテト）};
+  % \begin{tikzpicture}[x=1.1cm,y=1.0cm]
+  %   % axes
+  %   \draw[->] (0,0) -- (3.0,0);
+  %   \draw[->] (0,0) -- (0,2.6);
+  %   \node[below] at (1.5,0) {\scriptsize $x$（ハンバーガー）};
+  %   \node[left]  at (0,1.3) {\scriptsize $y$（ポテト）};
 
-    % points (cloud around a line)
-    \foreach \p in {(0.5,0.8),(0.7,0.7),(0.9,1.1),(1.1,1.0),(1.3,1.2),
-                   (1.5,1.4),(1.7,1.3),(1.9,1.7),(2.1,1.6),(2.3,1.9)}{
-      \fill \p circle (1.7pt);
-    }
+  %   % points (cloud around a line)
+  %   \foreach \p in {(0.5,0.8),(0.7,0.7),(0.9,1.1),(1.1,1.0),(1.3,1.2),
+  %                  (1.5,1.4),(1.7,1.3),(1.9,1.7),(2.1,1.6),(2.3,1.9)}{
+  %     \fill \p circle (1.7pt);
+  %   }
 
-    % regression line
-    \draw[thick] (0.4,0.6) -- (2.6,2.1);
-    \node[align=left] at (2.15,2.35) {\scriptsize 回帰直線\\\scriptsize（中心の傾向）};
+  %   % regression line
+  %   \draw[thick] (0.4,0.6) -- (2.6,2.1);
+  %   \node[align=left] at (2.15,2.35) {\scriptsize 回帰直線\\\scriptsize（中心の傾向）};
 
-    % a vertical guide for prediction
-    \draw[dashed] (2.0,0) -- (2.0,1.65);
-    \fill (2.0,1.65) circle (1.8pt);
-    \node[right] at (2.0,1.65) {\scriptsize $\hat{y}$};
-  \end{tikzpicture}
+  %   % a vertical guide for prediction
+  %   \draw[dashed] (2.0,0) -- (2.0,1.65);
+  %   \fill (2.0,1.65) circle (1.8pt);
+  %   \node[right] at (2.0,1.65) {\scriptsize $\hat{y}$};
+  % \end{tikzpicture}
+  \begin{figure}
+    \centering
+    \resizebox{1.0\textwidth}{!}{
+      \input{\pgfpath plot.pgf}
+      }
+  \end{figure}
 
   \vspace{0.2em}
   \scriptsize
@@ -832,32 +821,32 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \textbf{目的：} 現実のデータは「きれい」ではない。\\
 外れ値が入ると、回帰直線・式・R\textsuperscript{2}・予測が\textbf{どう変わるか}を体験する。
 
-\vspace{0.6em}
-\begin{tcolorbox}[title=やること（操作は実習①と同じ）]
-%\begin{tcolorbox}[title={やること 操作は実習1と同じ}]
+\vspace{0em}
+\emjdotblackS \markline{やること（操作は実習①と同じ）}
+\vspace{-0.8em}
 \begin{enumerate}
+  \setlength{\itemsep}{0mm} % ここで間隔をゼロ（最小）にする
   \item \textbf{outlier} シートを開く
   \item 散布図を作る（軸ラベルも同じ）
 %  \item 線形の回帰直線を追加し、\textbf{式とR\textsuperscript{2}}を表示する
   \item 線形の回帰直線を追加し、式とR\textsuperscript{2}を表示する
 \end{enumerate}
-\end{tcolorbox}
 
-\vspace{0.5em}
-\begin{tcolorbox}[title=比較するポイント（ここが学び）]
-\begin{itemize}
-  \item \textbf{線の向き・位置}は変わったか？
-  \item \textbf{傾き$a$}はどれくらい変わったか？
-  \item \textbf{R\textsuperscript{2}}は上がった？下がった？
-  \item 同じ$x$（例：$x=150$）で\textbf{$\hat{y}$はどれくらい変わる}？
-\end{itemize}
-\end{tcolorbox}
+\vspace{-0.5em}
+\emjdotblackS  \uline{\textbf{比較するポイント（ここが学び）}}
+\vspace{-0.6em}
+  \begin{itemize}
+    \item \textbf{線の向き・位置}は変わったか？
+    \item \textbf{傾き$a$}はどれくらい変わったか？
+    \item \textbf{R\textsuperscript{2}}は上がった？下がった？
+    \item 同じ$x$（例：$x=150$）で\textbf{$\hat{y}$はどれくらい変わる}？
+  \end{itemize}
 
-\vspace{0.6em}
-\begin{tcolorbox}[title=理由づけ：メモ列で説明する]
-外れている点を見つけたら、\textbf{メモ}を見て理由を言葉にする。\\
+
+\vspace{-0.6em}
+\emjdotblackS \textbf{理由づけ：メモ列で説明する}\\
+・外れている点を見つけたら、\textbf{メモ}を見て理由を言葉にする。\\
 例：\textbf{品切れ}（本当は売れるのに売れない）／\textbf{キャンペーン}（急に増える）
-\end{tcolorbox}
 
 \noteT{Slide19：外れ値を“発見→説明”させる運用}{
 【目的】外れ値の影響（線・式・R\textsuperscript{2}・予測のズレ）を、計算ではなく比較で理解させる。\\
@@ -866,9 +855,7 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 【運用】共有のしかた：2〜3名に発表させる（①どの点が外れ値？②メモは？③それで線やR\textsuperscript{2}はどう変わった？）。}
 \end{frame}
 
-%----------------------------------------------------------------------------------------
 % Slide 20: まとめ＋次回への橋（残差→最小二乗法）
-%----------------------------------------------------------------------------------------
 
 %@@PAGEBAND@@
 % ----------------------------------------------------------------------------------------
@@ -877,13 +864,13 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \begin{frame}{まとめ}
 \small
 
-\begin{tcolorbox}[title=今日の到達点（ここだけ）]
+\textbf{今日の到達点（ここだけ）}
+\vspace{-0.6em}
 \begin{itemize}
   \item 散布図で「関係」を見て、回帰直線で\textbf{一本の線}に要約した
   \item 回帰式 $\hat{y}=ax+b$ を使って、\textbf{予測}を計算できるようになった
   \item R\textsuperscript{2}は「当てはまりの目安」で、\textbf{正解率ではない}と分かった
 \end{itemize}
-\end{tcolorbox}
 
 \vspace{-0.6em}
 \begin{tcolorbox}[title=現実のポイント：ズレ（残差）が必ずある]
@@ -898,11 +885,10 @@ R\textsuperscript{2} は \textbf{正解率ではない}。\\
 \end{itemize}
 
 \vspace{-0.6em}
-\begin{tcolorbox}[title=次回への橋：では、線はどうやって決めている？]
+\textbf{次回への：では、線はどうやって決めている？}\\
 Excelは勝手に線を引いているように見えるが、\\
 実は「ズレ（残差）を小さくする」ルールで線を決めている。\\
 次回はその決め方＝\textbf{最小二乗法}を学ぶ。
-\end{tcolorbox}
 
 \noteT{Slide20：次回（最小二乗法）への接続を自然にする}{
 【目的】回帰の“結果”から“決め方”へ関心を移す。最小二乗法は「ズレを小さくするルール」として導入。\\

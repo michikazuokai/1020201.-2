@@ -27,6 +27,7 @@
 \usepackage{graphicx}
 \usepackage[abs]{overpic}
 \usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric} % ← shapes.geometric を追加
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{booktabs}
@@ -35,8 +36,25 @@
 \usepackage{longtable}
 \usepackage{pdfpages}
 \usepackage{etoolbox} % AtBeginEnvironment 等
+\usepackage[normalem]{ulem}
 \usetikzlibrary{calc}
 \usetikzlibrary{backgrounds}
+
+\usepackage{pgf}
+
+% マーカー（ハイライター）の定義
+\newcommand{\markline}[2][yellow]{%
+  \tikz[baseline=(X.base)]{%
+    \node[inner sep=0pt,outer sep=0pt] (X) {#2};
+    \begin{scope}[on background layer]
+      \fill[#1, opacity=0.35, rounded corners=0.8pt]
+        ([xshift=-0.15em,yshift=0.00ex]X.south west) rectangle
+        ([xshift= 0.15em,yshift=2.15ex]X.south east);
+    \end{scope}
+  }%
+}
+
+
 
 % minted（※ -shell-escape 必須）
 \usepackage{minted}
@@ -49,15 +67,90 @@
 
 % （必要なときだけ）tcolorbox
 \usepackage[most]{tcolorbox}
+\tcbuselibrary{skins}        % 高度なデザイン機能
+\tcbuselibrary{raster}
 
 % hyperref は最後
 \usepackage{hyperref}
+
+% --- 1. カラーパレットの定義 ---
+\definecolor{CanvaGreen}{HTML}{2E7D32} % メインの濃い緑（タイトル・枠線）
+\definecolor{PaleGreen}{HTML}{F1F8E9}  % 背景の薄い緑
+\definecolor{MyDarkGreen}{HTML}{587a7f}
+\definecolor{DeepText}{HTML}{1C1C1C}   % 本文の文字色
+\definecolor{MyWhiteBlue}{HTML}{F2FAFB} % 追加：あなたが指定した色
+\definecolor{BananaColor}{HTML}{FFFD78}
+
+
+% --- 2. tcolorbox のデフォルト設定（全ボックスに適用） ---
+%\tcbset{
+%    enhanced,                          % 高度な装飾を有効化
+%    colback=white,                 % 本文背景色
+%    colframe=MyDarkGreen,               % 枠線の色
+%    coltitle=white,                    % タイトル文字色
+%    fonttitle=\bfseries\sffamily,      % タイトルを太字・ゴシック
+%    boxrule=1pt,                       % 枠線の太さ
+%    arc=2mm,                           % 角の丸み
+%    left=3mm, right=3mm,               % 左右の余白
+%    top=0.5mm, bottom=0.5mm,               % 本文の上下余白
+%    toptitle=0.8mm, bottomtitle=0.5mm, % タイトル内の上下余白
+%    before skip=0.8em, after skip=0.2em,   % ボックス前後の行間
+%    shadow={0mm}{0mm}{0mm}{black!0}    % 影を完全に消してフラットに
+%}
+% --- 2. tcolorbox のデフォルト設定 ---
+\tcbset{
+    enhanced,
+    colback=MyWhiteBlue,            % 本文背景を F2FAFB に変更
+    colframe=MyDarkGreen,
+    coltitle=white,                 % タイトル文字は白（背景が濃い色の場合）
+    % coltitle=DeepText,            % もしタイトル背景も薄くするならこちら
+    fonttitle=\bfseries\sffamily\small, % タイトルを少し小さくしてスリム化
+    boxrule=0.5pt,                  % 1pt から 0.5pt へ細分化
+    arc=1mm,                        % 2mm から 1mm へ変更
+    sharp corners=south,            % 下側を直角に固定
+    % --- 余白の調整 ---
+    left=3mm, right=3mm,
+    top=0.5mm, bottom=0.5mm,
+    toptitle=0mm,                   % タイトル上の余白をゼロに
+    bottomtitle=0mm,                % タイトル下の余白をゼロに
+    % ------------------
+    before skip=0.8em, after skip=0.2em,
+    shadow={0mm}{0mm}{0mm}{black!0}
+}
+
+% --- カスタムボックスの定義 ---
+\newtcolorbox{myListbox}[1]{
+  enhanced,
+  detach title,              % 1. 標準のタイトル位置を解除
+  % 2. 本文が始まる直前（before upper）でタイトルを直接描画する
+  before upper={{\bfseries\large #1}\par\medskip},
+  % タイトルの後に改行を入れる設定
+  after title={\par\medskip},
+  colbacktitle=white, 
+  colframe=gray!50,
+  colback=white,
+  titlerule=0pt,
+  boxrule=1pt,
+  fonttitle=\bfseries\color{black},
+  title=#1,
+  after skip=1.5ex,
+  % --- 箇条書きの余白を強制的にゼロにする設定 ---
+  before upper={
+    \setbeamertemplate{itemize ispan}{0pt} % 項目間の余白
+    \setbeamertemplate{itemize items}[default]
+    \setlength{\leftmargini}{1.5em}
+    % Beamerの内部変数を直接操作して行間を詰める
+    \addtobeamertemplate{itemize/enumerate body begin}{}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+  }
+}
 
 %--------------------------
 % パス
 %--------------------------
 \newcommand{\assetpath}{/Volumes/NBPlan/TTC/授業資料/2025年度/}
 \graphicspath{{images/}{\assetpath/1020201.アルゴリズム２/11/images/}{../project_assets/images/}{../project_assets/emoji/emoji_pngs/}}
+% PGFがある特定の階層を定義
+\newcommand{\pgfpath}{\assetpath/1020201.アルゴリズム２/11/images/}
 
 %--------------------------
 % フッター
@@ -297,13 +390,18 @@
 %----------------------------------------------------------------------------------------
 % Slide 01: 今日のテーマ
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 01
+% ----------------------------------------------------------------------------------------
 \begin{frame}{平均の検定（t検定）で「判断」を完成させる}
 \small
 
-\begin{block}{今日やること（結論）}
+\begin{tcolorbox}[title={今日やること（結論）}]
 ポテトのデータを使って、\\
 \textbf{「平均が基準（135g）と違うと言ってよいか？」}を判断します。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 \begin{itemize}
@@ -313,13 +411,13 @@
 \end{itemize}
 
 \vspace{0.6em}
-\begin{block}{今日の到達目標}
+\begin{tcolorbox}[title={今日の到達目標}]
 \begin{itemize}
   \item 「位置（ずれ÷ゆれ）」を言葉で説明できる
   \item \textbf{p値と有意水準}を比べて、\textbf{棄却／棄却できない}で判断できる
   \item 結論を\textbf{文章（テンプレ）}で書ける
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \noteT{Slide01：第10回の立ち位置（運用）}{
 【目的】第10回の「判断の型」を前提に、今日のゴールを先に固定する。\\
@@ -331,6 +429,11 @@
 %----------------------------------------------------------------------------------------
 % Slide 02: ポテトの問い（再提示）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 02
+% ----------------------------------------------------------------------------------------
 \begin{frame}{導入：今日は少ない？たまたま？（ポテトの例）}
 \small
 
@@ -338,11 +441,11 @@
 しかし、毎回まったく同じ重さではなく、\textbf{ばらつき}があります。
 
 \vspace{0.3em}
-\begin{block}{今日の問い（平均の判断）}
+\begin{tcolorbox}[title={今日の問い（平均の判断）}]
 今日のデータを見ると、平均が135gより\textbf{小さそう}です。\\
 これは\textbf{たまたまのばらつき}でしょうか？\\
 それとも「\textbf{本当に減った}」と言ってよいでしょうか？
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -368,6 +471,11 @@
 %----------------------------------------------------------------------------------------
 % Slide 03: 前回回収（判断の型）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 03
+% ----------------------------------------------------------------------------------------
 \begin{frame}{前回の振り返り：判断の型はこれだけ}
 \small
 
@@ -375,7 +483,7 @@
 （今日は「位置」を表す数として t を使う。理由はこのあと説明）
 
 \vspace{0.6em}
-\begin{block}{判断の型（必ずこの順番）}
+\begin{tcolorbox}[title={判断の型（必ずこの順番）}]
 \begin{enumerate}
   \item \textbf{いつも通り}を仮定する（帰無仮説 $H_0$）
   \item 結果が分布の上で\textbf{どの位置}かを数値にする（位置）
@@ -383,7 +491,7 @@
   \item p値と\textbf{有意水準}を比べて判断する（棄却／棄却できない）
   \item 最後に\textbf{結論文}を書く
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 
 \begin{itemize}
@@ -402,6 +510,11 @@
 %----------------------------------------------------------------------------------------
 % Slide 04: 検定の本質（ずれ ÷ 平均のゆれ）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 04
+% ----------------------------------------------------------------------------------------
 \begin{frame}{検定の本質：珍しさは「ずれ $\div$ 平均のゆれ」}
 \small
 
@@ -409,12 +522,12 @@
 \textbf{判断に必要なのは、ずれの大きさだけではなく「どれくらい珍しいか」です。}
 
 \vspace{-0.5em}
-\begin{block}{考え方（ここが検定の核）}
+\begin{tcolorbox}[title={考え方（ここが検定の核）}]
 \textbf{珍しさ}は、次の比で決まります。\\
 \[
 \frac{\text{ずれ（平均との差）}}{\text{平均のゆれ（標本平均のばらつき）}}
 \]
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.5em}
 \begin{columns}
@@ -471,6 +584,11 @@
 %----------------------------------------------------------------------------------------
 % Slide 05: 母分散とは（店全体のばらつき）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 05
+% ----------------------------------------------------------------------------------------
 \begin{frame}{母分散（$\sigma^2$）とは：店全体の「ばらつきの大きさ」}
 \small
 
@@ -478,13 +596,13 @@
 この「\textbf{どれくらいバラバラか}」を表すのが\textbf{分散}（ばらつきの大きさ）です。
 
 \vspace{0.6em}
-\begin{block}{母分散（$\sigma^2$）・母標準偏差（$\sigma$）}
+\begin{tcolorbox}[title={母分散（$\sigma^2$）・母標準偏差（$\sigma$）}]
 \begin{itemize}
   \item \textbf{母集団}：この店のMサイズポテト全体（本当は無限に近い）
   \item \textbf{母分散 $\sigma^2$}：店全体のばらつきの大きさ
   \item \textbf{母標準偏差 $\sigma$}：その平方根（単位がgになるので直感的）
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -509,6 +627,11 @@
 %----------------------------------------------------------------------------------------
 % Slide 06: 母分散既知（σが分かると定規が固定）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 06
+% ----------------------------------------------------------------------------------------
 \begin{frame}{母分散既知の世界：$\sigma$ が分かると「定規」が固定できる}
 \small
 
@@ -517,13 +640,13 @@
 （これが \textbf{母分散既知} の世界です）
 
 \vspace{-0.3em}
-\begin{block}{ここが重要：平均のゆれ（標準誤差）が固定できる}
+\begin{tcolorbox}[title={ここが重要：平均のゆれ（標準誤差）が固定できる}]
 標本数を $n$ とすると、標本平均 $\bar{x}$ のゆれは
 \[
 \frac{\sigma}{\sqrt{n}}
 \]
 で決まります。
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -549,53 +672,50 @@
 %----------------------------------------------------------------------------------------
 % Slide 07: z値の再掲（前回とのつながり）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 07
+% ----------------------------------------------------------------------------------------
 \begin{frame}{z値の再掲：$Z$ は正規分布の上の「位置」}
 \small
+\vspace{-2.5ex} % タイトル下の隙間をさらに削る
 
 前回は、帰無仮説 $H_0:\mu=\mu_0$ のもとで、\\
 標本平均 $\bar{x}$ がどれくらい珍しい位置にあるかを、\textbf{Z値}で表しました。
 
-\vspace{0.6em}
-\begin{block}{Z値（位置）の形}
+\begin{tcolorbox}[title={Z値（位置）の形}, top=0mm, bottom=0mm, before=\vspace{0.2ex}, after=\vspace{0.2ex}]
 \[
 Z=\frac{\bar{x}-\mu_{0}}{\sigma/\sqrt{n}}
 \]
-\end{block}
+\end{tcolorbox}
 
-\vspace{0.4em}
 \begin{itemize}
+  \setlength{\itemsep}{0mm} % 箇条書きの間隔をゼロに
   \item 分子 $\bar{x}-\mu_0$：\textbf{ずれ}（平均との差）
-  \item 分母 $\sigma/\sqrt{n}$：\textbf{平均のゆれ}（標本平均の標準誤差）
+  \item 分母 $\sigma/\sqrt{n}$：\textbf{平均のゆれ}（標準誤差）
   \item つまり $Z$ は、\textbf{ずれが「ゆれ」の何倍か}（位置）
 \end{itemize}
 
-\vspace{0.5em}
-\begin{columns}
+\vspace{-1.5ex} % カラム前の調整
+\begin{columns}[t]
 \begin{column}{0.55\linewidth}
 \begin{itemize}
+  \setlength{\itemsep}{0mm}
   \item $Z=0$：中心（珍しくない）
   \item $|Z|$ が大きい：端に寄る（珍しい）
 \end{itemize}
 \end{column}
+
 \begin{column}{0.43\linewidth}
 \centering
-\begin{tikzpicture}[x=1.0cm,y=1.0cm]
-  \draw[->] (-2.3,0) -- (2.3,0);
-  \node[below right] at (2.25,0) {\scriptsize $Z$};
-  \draw[smooth, thick, domain=-2.1:2.1, samples=60]
-    plot (\x, {1.5*exp(-(\x*\x))});
-  \draw[dashed] (0,0) -- (0,1.5);
-  \node[below] at (0,0) {\scriptsize 0};
-
-  \draw[thick, ->] (-1.6,0.15) -- (-1.6,0);
-  \node[below] at (-1.6,0) {\scriptsize $Z$};
-  \node[align=center] at (0,1.75) {\scriptsize 分布の上の\\\scriptsize 位置};
-\end{tikzpicture}
+\vspace{-12.0ex} % ★ここ！ 負の値を大きくしてグラフを上に引き上げる
+\resizebox{1.0\linewidth}{!}{\input{\pgfpath z_distribution_plot.pgf}}
 \end{column}
 \end{columns}
 
-\vspace{0.2em}
-\emjpin \textbf{この「位置」→ p値（珍しさ）→ 判断}の流れは、今日も同じ
+\vfill
+\emjpin \textbf{この「位置」$\rightarrow$ p値 $\rightarrow$ 判断の流れは今日も同じ}
 
 \noteT{Slide07：再掲の狙い（最小限で回収）}{
 【目的】前回のZを「位置（ずれ÷ゆれ）」として回収し、今日のtへつなぐ。\\
@@ -607,6 +727,11 @@ Z=\frac{\bar{x}-\mu_{0}}{\sigma/\sqrt{n}}
 %----------------------------------------------------------------------------------------
 % Slide 08: 現実（σは普通わからない＝母分散未知）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 08
+% ----------------------------------------------------------------------------------------
 \begin{frame}{現実：$\sigma$ は普通わからない（母分散未知）}
 \small
 
@@ -614,22 +739,23 @@ Z=\frac{\bar{x}-\mu_{0}}{\sigma/\sqrt{n}}
 しかし現実には、$\sigma$ は\textbf{最初から分かっていることはほとんどありません}。
 
 \vspace{-0.6em}
-\begin{block}{母分散未知とは}
+\begin{tcolorbox}[title={母分散未知とは}]
 \textbf{母集団（店全体）のばらつき $\sigma$ が分からない}状態
-\end{block}
+\end{tcolorbox}
 
-\vspace{-0.5em}
 ポテトの例では：
+\vspace{-0.6em}
 \begin{itemize}
+  \setlength{\itemsep}{0mm} % 箇条書きの間隔をゼロに
   \item 店が「この店のばらつきは $\sigma=\cdots$」と公表しているわけではない
   \item 私たちが持っているのは、\textbf{集めたデータ（標本）}だけ
 \end{itemize}
 
 \vspace{-0.5em}
-\begin{block}{ここで問題になる点}
+\begin{tcolorbox}[title={ここで問題になる点}]
 $Z=\dfrac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}$ の分母にある $\sigma$ が分からないと、\\
 \textbf{平均のゆれ（標準誤差）＝定規が決まらない}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.2em}
 \emjpin \textbf{定規が決まらないなら、標本から定規を作る必要がある}
@@ -658,6 +784,11 @@ $Z=\dfrac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}$ の分母にある $\sigma$ が分か
 %----------------------------------------------------------------------------------------
 % Slide 09: 標本からばらつきを見積もる（sを使う）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 09
+% ----------------------------------------------------------------------------------------
 \begin{frame}{標本からばらつきを見積もる：$s$（標本標準偏差）を使う}
 \small
 
@@ -665,10 +796,10 @@ $\sigma$ が分からないなら、集めたデータ（標本）から、\\
 ばらつきの大きさを\textbf{見積もる}必要があります。そこで使うのが $s$ です。
 
 \vspace{0.6em}
-\begin{block}{標本標準偏差 $s$}
+\begin{tcolorbox}[title={標本標準偏差 $s$}]
 \textbf{標本データから計算した「ばらつきの大きさ」}\\
 （$\sigma$ の代わりとして使う見積もり値）
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -677,11 +808,11 @@ $\sigma$ が分からないなら、集めたデータ（標本）から、\\
 \end{itemize}
 
 \vspace{0.6em}
-\begin{block}{平均のゆれ（標準誤差）も、標本から作る}
+\begin{tcolorbox}[title={平均のゆれ（標準誤差）も、標本から作る}]
 \[
 \text{標準誤差}=\frac{s}{\sqrt{n}}
 \]
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.2em}
 \emjpin \textbf{ここがポイント：定規（分母）も標本ごとに少し揺れる}
@@ -699,6 +830,11 @@ $\sigma$ が分からないなら、集めたデータ（標本）から、\\
 %----------------------------------------------------------------------------------------
 % Slide 10: 不偏標準偏差（STDEV.S と df=n-1 の意味：最小限）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 10
+% ----------------------------------------------------------------------------------------
 \begin{frame}{不偏標準偏差：\texttt{STDEV.S} と $df=n-1$（最小限）}
 \small
 
@@ -706,19 +842,19 @@ $\sigma$ が分からないなら、集めたデータ（標本）から、\\
 Excelでは、\textbf{\texttt{STDEV.S}} を使います。
 
 \vspace{-0.6em}
-\begin{block}{Excelで使う（これでOK）}
+\begin{tcolorbox}[title={Excelで使う（これでOK）}]
 \begin{itemize}
   \item 標本標準偏差（不偏）：\texttt{STDEV.S(range)}
   \item 自由度：$df=n-1$
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
-\begin{block}{今日はここだけ覚える（ルール）}
+\begin{tcolorbox}[title={今日はここだけ覚える（ルール）}]
 \begin{itemize}
   \item ばらつきは \texttt{STDEV.S} で計算する（標本からの見積もり）
   \item t分布の自由度は $df=n-1$ を使う
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{-0.4em}
 \begin{itemize}
@@ -741,6 +877,11 @@ Excelでは、\textbf{\texttt{STDEV.S}} を使います。
 %----------------------------------------------------------------------------------------
 % Slide 11: 定規が揺れる世界 → t分布（裾が厚い／nが増えると近づく）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 11
+% ----------------------------------------------------------------------------------------
 \begin{frame}{定規が揺れる世界 $\Rightarrow$ t分布（裾が厚い／$n$が増えると近づく）}
 \small
 
@@ -748,10 +889,10 @@ $\sigma$ が分からないので $s$ を使うと、分母（定規）も標本
 すると「位置」の分布は、正規分布ではなく \textbf{t分布}になります。
 
 \vspace{0.6em}
-\begin{block}{結論（ここが「なぜt？」の答え）}
+\begin{tcolorbox}[title={結論（ここが「なぜt？」の答え）}]
 \textbf{$\sigma$ の代わりに $s$ を使う}（定規が揺れる）\\
 $\Rightarrow$ \textbf{位置は t分布に従う}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.6em}
 \begin{columns}
@@ -790,54 +931,52 @@ $\Rightarrow$ \textbf{位置は t分布に従う}
 % Slide 12: t値（位置）：言葉で理解
 %----------------------------------------------------------------------------------------
 %\begin{frame}{t値：$t=\dfrac{\bar{x}-\mu_0}{s/\sqrt{n}}$ は「分布の上の位置」}
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 12
+% ----------------------------------------------------------------------------------------
 \begin{frame}{t値は「分布の上の位置」}
 \small
-
+\vspace{-1.5ex} % タイトルと本文の間の隙間を削る
 母分散が未知（$\sigma$が分からない）なので、標本から作った $s$ を使います。\\
 そのときの「位置」を表す数が \textbf{t値}です。
 
-%\vspace{0.6em}
-\begin{block}{t値（位置）の形}
+\begin{tcolorbox}[title={t値（位置）の形}]
 \[
 t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 \]
-\end{block}
+\end{tcolorbox}
 
-\vspace{-0.4em}
+\vspace{-0.4ex}
 \begin{itemize}
   \item 分子 $\bar{x}-\mu_0$：\textbf{ずれ}（平均との差）
   \item 分母 $s/\sqrt{n}$：\textbf{平均のゆれ}（標準誤差：標本から作る定規）
   \item つまり $t$ は、\textbf{ずれが「ゆれ」の何倍か}（位置）
 \end{itemize}
-
-\vspace{-1.5em}
-\begin{columns}
+\vspace{-1ex} % カラム前の隙間を調整
+\begin{columns}[t]
 \begin{column}{0.58\linewidth}
-\begin{block}{Zとの違い（ここだけ）}
+
+\begin{tcolorbox}[title={Zとの違い（ここだけ）}]
 \begin{itemize}
+  \setlength{\itemsep}{0mm}
   \item $Z$：分母に $\sigma$（既知）を使う
   \item $t$：分母に $s$（標本の見積もり）を使う
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 \end{column}
 \begin{column}{0.40\linewidth}
 \centering
-\begin{tikzpicture}[x=1.0cm,y=1.0cm]
-  \draw[->] (-2.3,0) -- (2.3,0);
-  \node[below right] at (2.25,0) {\scriptsize 位置};
-  \draw[smooth, thick, domain=-2.1:2.1, samples=60]
-    plot (\x, {1.5*exp(-(\x*\x))});
-  \draw[dashed] (0,0) -- (0,1.5);
-  \node[below] at (0,0) {\scriptsize 0};
 
-  \draw[thick, ->] (1.6,0.15) -- (1.6,0);
-  \node[below] at (1.6,0) {\scriptsize $t$};
-  \node[align=center] at (0,1.75) {\scriptsize 分布の上の\\\scriptsize 位置};
-\end{tikzpicture}
+\vspace{-12.0ex} % ★ここ！ 負の値を大きくしてグラフを上に引き上げる
+\resizebox{1.2\linewidth}{!}{\input{\pgfpath distribution_plot1.pgf}}
+
+\vspace{-2.0ex} % ★グラフ下の余白も削る
 \end{column}
 \end{columns}
 
-\vspace{0.2em}
+\vfill % 余ったスペースを自動で割り振る
 \emjpin \textbf{t値は「計算の暗記」ではなく、}
 \textbf{“ずれ÷ゆれ”で作った位置情報}
 
@@ -851,6 +990,11 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 %----------------------------------------------------------------------------------------
 % Slide 13: p値の求め方（t分布の外側確率：両側）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 13
+% ----------------------------------------------------------------------------------------
 \begin{frame}{p値の求め方：t分布の「外側の確率」（両側）}
 \small
 
@@ -858,12 +1002,12 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 ただし今回は \textbf{t分布} を使って珍しさを確率にします。
 
 \vspace{0.6em}
-\begin{block}{p値（両側）の意味（文章）}
+\begin{tcolorbox}[title={p値（両側）の意味（文章）}]
 \textbf{$H_0$が正しいと仮定したとき、}\\
 \textbf{$|t|$ 以上に極端な結果が出る確率}
-\end{block}
+\end{tcolorbox}
 
-\vspace{0.5em}
+\vspace{-0.5em}
 \begin{columns}
 \begin{column}{0.58\linewidth}
 \begin{itemize}
@@ -872,10 +1016,10 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
   \item 両側検定では左右両方なので \textbf{「外側×2」}になる
 \end{itemize}
 
-\vspace{0.4em}
-\begin{block}{Excel（例：両側）}
+\vspace{-0.4em}
+\begin{tcolorbox}[title={Excel（例：両側）}]
 \texttt{=T.DIST.2T(ABS(t), df)}
-\end{block}
+\end{tcolorbox}
 
 \scriptsize
 ※df は $n-1$（前スライドまでの約束）
@@ -883,38 +1027,16 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 
 \begin{column}{0.40\linewidth}
 \centering
-% 画像提案：t分布に「外側（左右）」を薄く塗った図（両側）
-\includegraphics[width=\linewidth]{t_pvalue_twoside.png}
+\vspace{-1.0em} % グラフを上に少し引き上げ
+\resizebox{1.2\linewidth}{!}{\input{\pgfpath p_value_plot.pgf}}
 
-% \begin{tikzpicture}[x=1.0cm,y=1.0cm]
-%   \draw[->] (-2.3,0) -- (2.3,0);
-%   \node[below right] at (2.25,0) {\scriptsize $t$};
-
-%   % ざっくり山（模式）
-%   \draw[smooth, thick, domain=-2.1:2.1, samples=60]
-%     plot (\x, {1.45*exp(-(\x*\x)/1.2)});
-
-%   \draw[dashed] (0,0) -- (0,1.45);
-%   \node[below] at (0,0) {\scriptsize 0};
-
-%   % t位置
-%   \draw[thick, ->] (1.5,0.15) -- (1.5,0);
-%   \node[below] at (1.5,0) {\scriptsize $t$};
-
-%   % 外側（模式：左右に薄い領域）
-%   \fill[gray, opacity=0.25] (1.5,0) -- (2.2,0) -- (2.2,0.10) -- cycle;
-%   \fill[gray, opacity=0.25] (-1.5,0) -- (-2.2,0) -- (-2.2,0.10) -- cycle;
-
-%   \node[align=center] at (0,1.75) {\scriptsize 外側の面積\\\scriptsize $\Rightarrow p$値};
-% \end{tikzpicture}
-
-\vspace{-0.3em}
+\vspace{-2.0em} % グラフ下の余白を削る
 \scriptsize
 両側：左右の外側を合計
 \end{column}
 \end{columns}
 
-\vspace{0.2em}
+\vspace{-0.5em}
 \emjpin \textbf{前回と同型：位置 $\rightarrow$ 外側確率（p値）}
 
 \noteT{Slide13：前回と同じだと気づかせる}{
@@ -927,6 +1049,11 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 %----------------------------------------------------------------------------------------
 % Slide 14: 判断のルール再確認（p値と有意水準）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 14
+% ----------------------------------------------------------------------------------------
 \begin{frame}{判断のルール（再確認）：p値と有意水準を比べる}
 \small
 
@@ -934,12 +1061,12 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 （分布が正規→tに変わっても、判断ルールは同じ）
 
 \vspace{0.6em}
-\begin{block}{判断}
+\begin{tcolorbox}[title={判断}]
 \begin{itemize}
   \item \textbf{p値 $<$ 有意水準}：$H_0$ を\textbf{棄却}する（いつも通りは怪しい）
   \item \textbf{p値 $\ge$ 有意水準}：$H_0$ を\textbf{棄却できない}（怪しいと言えない）
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \begin{itemize}
@@ -960,6 +1087,11 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 %----------------------------------------------------------------------------------------
 % Slide 15: 結論文テンプレ（前回の型を継続：この回用に微調整）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 15
+% ----------------------------------------------------------------------------------------
 \begin{frame}{結論文テンプレ（前回の型を継続：t検定版）}
 \small
 
@@ -967,11 +1099,11 @@ t=\frac{\bar{x}-\mu_0}{s/\sqrt{n}}
 前回と同じ型で書けばOKです（丸暗記でよい）。
 
 \vspace{0.6em}
-\begin{block}{結論文テンプレ（t検定）}
+\begin{tcolorbox}[title={結論文テンプレ（t検定）}]
 有意水準を \underline{\hspace{2.0em}} とすると、p値は \underline{\hspace{2.5em}} であり、\\
 p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）ので、\\
 帰無仮説（$\mu=\mu_0$）は \underline{\hspace{4.0em}}（棄却する/棄却できない）。
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
 \begin{itemize}
@@ -990,6 +1122,11 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 %----------------------------------------------------------------------------------------
 % Slide 16: 210件データの位置づけ（母集団っぽい全体のばらつきを見る）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 16
+% ----------------------------------------------------------------------------------------
 \begin{frame}{210件データの位置づけ：「母集団っぽい全体」を先に見る}
 \small
 
@@ -997,13 +1134,13 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 これは「店の全て」ではありませんが、授業では \textbf{母集団に近い全体データ}として扱います。
 
 \vspace{0.6em}
-\begin{block}{この210件でやりたいこと（推測）}
+\begin{tcolorbox}[title={この210件でやりたいこと（推測）}]
 \begin{itemize}
   \item 平均はだいたい \textbf{何g}か（中心）
   \item ばらつきは \textbf{どれくらい}か（散らばり）
   \item 外れ値や偏りはないか（分布の形）
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
 \begin{itemize}
@@ -1027,6 +1164,11 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 %----------------------------------------------------------------------------------------
 % Slide 17: 標本30件で判断する（ランダム抽出→検定へ）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 17
+% ----------------------------------------------------------------------------------------
 \begin{frame}{標本30件で判断する：ランダム抽出 $\rightarrow$ 検定へ}
 \small
 
@@ -1034,13 +1176,13 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 だから \textbf{標本（サンプル）}を取り、そこから判断します。
 
 \vspace{0.6em}
-\begin{block}{今回の実習の流れ（推測→判断）}
+\begin{tcolorbox}[title={今回の実習の流れ（推測→判断）}]
 \begin{enumerate}
   \item 210件全体で「ばらつきの感じ」をつかむ（推測）
   \item そこから \textbf{30件をランダム抽出}して標本を作る
   \item 標本の平均 $\bar{x}$ が 135g と違うと言ってよいかを \textbf{t検定}で判断する
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
 \begin{itemize}
@@ -1062,13 +1204,18 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 %----------------------------------------------------------------------------------------
 % Slide 18: 実習①：1標本t検定（30件）全体手順（5ステップ）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 18
+% ----------------------------------------------------------------------------------------
 \begin{frame}{実習①：1標本t検定（30件）全体手順（5ステップ）}
 \small
 \textbf{目的：} 30件の標本から、平均が135gと違うと言ってよいかを判断する。\\
 （ゴールは \textbf{結論文まで}）
 
 \vspace{0.6em}
-\begin{block}{5ステップ（この順番で作業する）}
+\begin{tcolorbox}[title={5ステップ（この順番で作業する）}]
 \begin{enumerate}
   \item \textbf{標本30件}を作る（ランダム抽出）
   \item 標本から \textbf{$\bar{x}$（平均）, $s$（標準偏差）, $n$（件数）}を計算する
@@ -1076,7 +1223,7 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
   \item \textbf{p値}を出す（両側）：\texttt{T.DIST.2T(ABS(t), df)}（$df=n-1$）
   \item \textbf{有意水準}と比べて \textbf{結論文}を書く（棄却／棄却できない）
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \begin{itemize}
@@ -1101,24 +1248,29 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 %----------------------------------------------------------------------------------------
 % Slide 19: 実習②（発展）：対応ありt検定の考え方（差を見る）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 19
+% ----------------------------------------------------------------------------------------
 \begin{frame}{実習②（発展）：対応ありt検定の考え方（差を見る）}
 \small
 \textbf{時間があれば}、同じ「判断の型」を別の形で体験します。\\
 対応あり（ペア）では、\textbf{2つを別々に比べるのではなく「差」を見る}のがポイントです。
 
 \vspace{0.6em}
-\begin{block}{例（対応ありの状況）}
+\begin{tcolorbox}[title={例（対応ありの状況）}]
 同じ人のポテトを「\textbf{月曜}」と「\textbf{金曜}」で比べる。\\
 （人による食べ方・取り分けのクセを打ち消したい）
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
-\begin{block}{考え方（ここだけ）}
+\begin{tcolorbox}[title={考え方（ここだけ）}]
 \begin{enumerate}
   \item 各人について \textbf{差} $d = (\text{金曜})-(\text{月曜})$ を作る
   \item 「差の平均」が 0 と違うかを \textbf{1標本t検定}で判断する
 \end{enumerate}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.4em}
 \begin{itemize}
@@ -1136,25 +1288,30 @@ p値は有意水準より \underline{\hspace{2.5em}}（小さい/大きい）の
 %----------------------------------------------------------------------------------------
 % Slide 20: まとめ＋次回への橋（同じ型で進める／分布は正規＋tで十分）
 %----------------------------------------------------------------------------------------
+
+%@@PAGEBAND@@
+% ----------------------------------------------------------------------------------------
+%   page 20
+% ----------------------------------------------------------------------------------------
 \begin{frame}{まとめ＋次回への橋：検定は「同じ型」で進める}
 \small
 今日のゴールは、t検定を「計算」としてではなく、\textbf{判断の型}として完成させることでした。
 
 \vspace{0.6em}
-\begin{block}{今日できるようになったこと}
+\begin{tcolorbox}[title={今日できるようになったこと}]
 \begin{itemize}
   \item $\sigma$ が分からない（母分散未知）ときは、$s$ を使って \textbf{t値（位置）}を作る
   \item p値は \textbf{t分布の外側確率}（両側）で出す
   \item \textbf{p値と有意水準}を比べて、棄却／棄却できないで判断する
   \item 最後に \textbf{結論文}で説明できる
 \end{itemize}
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.5em}
-\begin{block}{次回への橋}
+\begin{tcolorbox}[title={次回への橋}]
 検定は、\textbf{分布が変わっても型は同じ}：\\
 $H_0 \rightarrow$ 位置 $\rightarrow p \rightarrow$ 比較 $\rightarrow$ 結論文
-\end{block}
+\end{tcolorbox}
 
 \vspace{0.3em}
 \emjpin \textbf{この授業では分布は「正規＋t」で十分。増やしすぎない。}
